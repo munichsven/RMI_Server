@@ -32,11 +32,6 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			System.out.println("Server Exception: " + e.getMessage());
 		}
 	}
-
-	@Override
-	public String halloString(final String name) throws RemoteException {
-		return name + " h a l l o ";
-	}
 	
 	public static void main(String [] args){
 		try {

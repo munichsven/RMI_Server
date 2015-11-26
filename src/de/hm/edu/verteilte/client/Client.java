@@ -29,13 +29,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			
 			try {
 				registry = LocateRegistry.getRegistry("192.168.56.102",1099);
-			} catch (RemoteException e) {
-			}
+			} catch (RemoteException e) {}
 			
 			 server = (ServerI)registry.lookup("PhilServer");
-			 String test = server.halloString("dsjafjkdsfjl");
-			 System.out.println(test);
-			 //id = server.register(this);
 		} catch (Exception e) {
 			System.out.println("*** Client Exception: " + e.getMessage());
 		}
@@ -44,16 +40,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private void register() {
 
 		try {
-			//registry.bind("PhilClient", this);
-//			ServerIntf stub = (ServerIntf) UnicastRemoteObject.exportObject(helloServer, 0);
-//			Registry registry = LocateRegistry.createRegistry(1088);
-//			registry.rebind(nameOfHelloServer, stub);
-			
 			
 			ClientI stub = (ClientI) this;
-			System.out.println("***1");
 			server.insertIntoRegistry("PhilServer", stub);
-			System.out.println("***2");
 			System.out.println("Client bei Server eingetragen!");
 		} catch (Exception e) {
 			System.out.println("*** Server Exception: " + e.getMessage());
@@ -63,7 +52,6 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	public static void main(String[] args) {
 		try {
 			new Client();
-		} catch (RemoteException e) {
-		}
+		} catch (RemoteException e) {}
 	}
 }
