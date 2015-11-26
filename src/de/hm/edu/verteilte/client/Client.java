@@ -19,6 +19,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private Registry registry;
 	private int seats; 
 	private LinkedList<Seat> seatList;
+	private LinkedList<Fork> forkList;
 
 	protected Client() throws RemoteException {
 		super();
@@ -26,6 +27,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		register();
 		seats = Constant.SEATS / Constant.CLIENTS;
 		seatList = new LinkedList<Seat>();
+		forkList = new LinkedList<Fork>();
 		createSeats(seats);
 	}
 
@@ -33,7 +35,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		try {
 
 			try {
-				registry = LocateRegistry.getRegistry("192.168.56.102", 1099);
+				registry = LocateRegistry.getRegistry(Constant.IP_SERVER, Constant.PORT);
 			} catch (RemoteException e) {
 			}
 

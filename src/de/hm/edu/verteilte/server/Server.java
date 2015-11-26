@@ -7,6 +7,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import de.hm.edu.verteilte.client.ClientI;
+import de.hm.edu.verteilte.controller.Constant;
 
 public class Server extends UnicastRemoteObject implements ServerI{
 	
@@ -19,7 +20,7 @@ public class Server extends UnicastRemoteObject implements ServerI{
 	{
 		try
 		{
-			LocateRegistry.createRegistry(1099);
+			LocateRegistry.createRegistry(Constant.PORT);
 
 		} catch (RemoteException e) {}
 		
@@ -41,7 +42,7 @@ public class Server extends UnicastRemoteObject implements ServerI{
 
 	@Override
 	public boolean insertIntoRegistry(String name, ClientI client) throws RemoteException {
-		Registry tmpReg = LocateRegistry.getRegistry(1099);
+		Registry tmpReg = LocateRegistry.getRegistry(Constant.PORT);
 		tmpReg.rebind(name, client);
 		System.out.println(name + " in Server-Registry eingetragen!");
 		return true;
