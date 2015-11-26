@@ -23,7 +23,8 @@ public class Client extends UnicastRemoteObject implements ClientI{
 		try 
 		{
 			server = (ServerI)Naming.lookup("//" + Constant.IP + "/PhilServer");
-			server.halloString("dsjafjkdsfjl");
+			String test = server.halloString("dsjafjkdsfjl");
+			System.out.println(test);
 			//id = server.register(this);
 		}
 		catch (Exception e) {

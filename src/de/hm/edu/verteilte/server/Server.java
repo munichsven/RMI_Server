@@ -34,6 +34,12 @@ public class Server extends UnicastRemoteObject implements ServerI{
 	public String halloString(final String name) throws RemoteException {
 		return name + "Halllllllllllllo";
 	}
+	
+	public static void main(String [] args){
+		try {
+			new Server();
+		} catch (RemoteException e) {}
+	}
 
 
 }
