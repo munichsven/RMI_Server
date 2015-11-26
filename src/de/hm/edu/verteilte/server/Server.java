@@ -3,7 +3,10 @@ package de.hm.edu.verteilte.server;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+
+import de.hm.edu.verteilte.client.ClientI;
 
 public class Server extends UnicastRemoteObject implements ServerI{
 	
@@ -32,13 +35,21 @@ public class Server extends UnicastRemoteObject implements ServerI{
 
 	@Override
 	public String halloString(final String name) throws RemoteException {
-		return name + "Halllllllllllllo";
+		return name + " h a l l o ";
 	}
 	
 	public static void main(String [] args){
 		try {
 			new Server();
 		} catch (RemoteException e) {}
+	}
+
+	@Override
+	public boolean insertIntoRegistry(String name, ClientI client) throws RemoteException {
+		Registry tmpReg = LocateRegistry.getRegistry(1099);
+		tmpReg.rebind(name, client);
+		System.out.println(name + " in Server-Registry eingetragen!");
+		return true;
 	}
 
 
