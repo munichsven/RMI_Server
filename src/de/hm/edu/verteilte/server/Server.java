@@ -39,6 +39,22 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			new Server();
 		} catch (RemoteException e) {}
 	}
+	
+	public void printRegistry(){
+		Registry registry;
+		try {
+			registry = LocateRegistry.getRegistry();
+			String[] elementsInRegistry = registry.list();
+			for (String string : elementsInRegistry) {
+				System.out.println(string);
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
 
 	@Override
 	public boolean insertIntoRegistry(String name, ClientI client) throws RemoteException {
