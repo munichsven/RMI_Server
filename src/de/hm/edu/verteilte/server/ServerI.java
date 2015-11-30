@@ -10,5 +10,5 @@ public interface ServerI extends Remote{
 	
 	boolean insertIntoRegistry(String name, ClientI client) throws RemoteException;
 
-	void printRegistry() throws RemoteException;
+	int getRegistry() throws RemoteException;
 }
