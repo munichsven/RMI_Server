@@ -56,8 +56,12 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			ClientI client1 = (ClientI) server.registry.lookup(client1Name);
 			ClientI client2 = (ClientI) server.registry.lookup(client2Name);
 			
+			//initialisierungsphase, deswegen nicht maximal parallel
 			client1.createSeats(Constant.SEATS/Constant.CLIENTS);
 			client2.createSeats(Constant.SEATS/Constant.CLIENTS);
+			
+			client1.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
+			
 									
 		} catch (RemoteException | InterruptedException | NotBoundException e) {
 			e.printStackTrace();

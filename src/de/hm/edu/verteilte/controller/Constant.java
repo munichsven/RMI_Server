@@ -32,6 +32,9 @@ public class Constant {
 
 	public static final long BAN_FACTOR = 15;
 	
+	public static final int PHILOSOPHS = 10;
+	
+	public static final int HUNGRY_PHILOSOPHS = 4;
 	
 	private static int id = 0;
 	

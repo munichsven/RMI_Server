@@ -6,7 +6,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
 
 import de.hm.edu.verteilte.controller.Constant;
 import de.hm.edu.verteilte.server.ServerI;
@@ -22,7 +24,10 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private int seats;
 	private LinkedList<Seat> seatList;
 	private LinkedList<Fork> forkList;
+	private ArrayList<Philosoph> philosophList;
 	private int id = 0;
+	private Random random;
+	private int hungryPeople = 0;
 
 	protected Client() throws RemoteException {
 		super();
@@ -30,6 +35,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		register();
 		seatList = new LinkedList<Seat>();
 		forkList = new LinkedList<Fork>();
+		philosophList = new ArrayList<Philosoph>();
+		random = new Random();
 	}
 
 	private void getRegistryAndregisterToServer() {
@@ -46,32 +53,34 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		}
 	}
 
+	public LinkedList<Seat> getSeatList() {
+		return seatList;
+	}
+
 	private void register() {
 
-		
+		ClientI stub = (ClientI) this;
+		String name = "PhilClient" + id;
 
-			ClientI stub = (ClientI) this;
-			String name = "PhilClient" + id;
+		try {
+			registry.lookup(name); // prüfen ob id schon verwendet wird!
+			id++;
+			name = "PhilClient" + id;
+		} catch (AccessException e) {
+			System.out.println("***RegistryFehler");
+		} catch (RemoteException e) {
+			System.out.println("***RegistryFehler");
+		} catch (NotBoundException e) {
+			// erster Namensvorschlag wird genommen
+			System.out.println(id);
+		}
 
-			try {
-				registry.lookup(name); //prüfen ob id schon verwendet wird!
-				id++;
-				name = "PhilClient" +id;
-			} catch (AccessException e) {
-				System.out.println("***RegistryFehler");
-			} catch (RemoteException e) {
-				System.out.println("***RegistryFehler");
-			} catch (NotBoundException e) {
-				//erster Namensvorschlag wird genommen
-				System.out.println(id);
-			}
-			
-			try {
-				server.insertIntoRegistry(name, stub);
-				System.out.println("Client bei Server eingetragen!");
-			} catch (RemoteException e) {
-				System.out.println("***RegistryFehler");
-			}
+		try {
+			server.insertIntoRegistry(name, stub);
+			System.out.println("Client bei Server eingetragen!");
+		} catch (RemoteException e) {
+			System.out.println("***RegistryFehler");
+		}
 	}
 
 	public static void main(String[] args) {
@@ -100,7 +109,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			Seat crntSeat = seatList.get(k);
 			crntSeat.setLeft(forkList.get(k));
 			if (!seatList.get(k).equals(seatList.getFirst())) {
-				seatList.get(k-1).setRight(crntSeat.getLeft());
+				seatList.get(k - 1).setRight(crntSeat.getLeft());
 			} else {
 				// hier die linke gabel vom "nachbartisch auf dem anderen
 				// clietn"
@@ -109,17 +118,55 @@ public class Client extends UnicastRemoteObject implements ClientI {
 				// Gabel auf dem anderen Client schon vorhanden ist
 			}
 		}
-		printSeats();
 	}
-	
-	private void printSeats() throws RemoteException{
+
+	private void printSeats() throws RemoteException {
 		for (Seat seat : seatList) {
-			System.out.println("Client: "+ seat.getClient().getId() + " Sitzid: "+seat.getId() + " Left: "+ seat.getLeft() + " Right: "+ seat.getRight());
+			System.out.println("Client: " + seat.getClient().getId() + " Sitzid: " + seat.getId() + " Left: "
+					+ seat.getLeft() + " Right: " + seat.getRight());
 		}
 	}
 
 	@Override
 	public int getId() throws RemoteException {
 		return this.id;
+	}
+
+	@Override
+	public void createPhilosophs(int philosophs) {
+		int i = id*philosophs;
+		philosophs = (id + 1) * philosophs;
+		
+		while (i < philosophs) {
+			Philosoph phil = new Philosoph(this, i, randomHungry(), seatList);
+			philosophList.add(phil);
+			phil.start();
+			i++;
+		}
+	}
+
+	/**
+	 * �berpr�ft ob die Maximale Anzahl von hungrigen Philosophen erreicht ist,
+	 * wenn nicht wird ein Random boolean zur�ck gegeben.
+	 * 
+	 * @return hungry - gibt zur�ck ob der Philosoph hungrig ist oder nicht.
+	 */
+	private boolean randomHungry() {
+		final boolean hungry;
+		if (hungryPeople < Constant.HUNGRY_PHILOSOPHS/Constant.CLIENTS) {
+			hungry = random.nextBoolean();
+
+			if (hungry) {
+				hungryPeople++;
+			}
+
+			return hungry;
+		} else
+			return false;
+	}
+
+	@Override
+	public void removePhilosoph(int id) {
+		// TODO Auto-generated method stub
 	}
 }
