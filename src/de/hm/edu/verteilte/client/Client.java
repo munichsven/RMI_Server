@@ -1,5 +1,7 @@
 package de.hm.edu.verteilte.client;
 
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -20,11 +22,10 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private int seats;
 	private LinkedList<Seat> seatList;
 	private LinkedList<Fork> forkList;
-	private final int id;
+	private int id = 0;
 
 	protected Client() throws RemoteException {
 		super();
-		id = Constant.createId();
 		getRegistryAndregisterToServer();
 		register();
 		seatList = new LinkedList<Seat>();
@@ -47,15 +48,30 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	private void register() {
 
-		try {
+		
 
 			ClientI stub = (ClientI) this;
-			String name = "PhilClient" + this.id;
-			server.insertIntoRegistry(name, stub);
-			System.out.println("Client bei Server eingetragen!");
-		} catch (Exception e) {
-			System.out.println("*** Server Exception: " + e.getMessage());
-		}
+			String name = "PhilClient" + id;
+
+			try {
+				registry.lookup(name); //prüfen ob id schon verwendet wird!
+				id++;
+				name = "PhilClient" +id;
+			} catch (AccessException e) {
+				System.out.println("***RegistryFehler");
+			} catch (RemoteException e) {
+				System.out.println("***RegistryFehler");
+			} catch (NotBoundException e) {
+				//erster Namensvorschlag wird genommen
+				System.out.println(id);
+			}
+			
+			try {
+				server.insertIntoRegistry(name, stub);
+				System.out.println("Client bei Server eingetragen!");
+			} catch (RemoteException e) {
+				System.out.println("***RegistryFehler");
+			}
 	}
 
 	public static void main(String[] args) {
@@ -67,13 +83,13 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public void createSeats(int anz) throws RemoteException {
-		// TODO FORKS mit Seat
 		int i = id * anz;
 		anz = (id + 1) * anz;
 		int j = i;
 		int anz_j = anz;
 		while (j < anz_j) {
 			forkList.add(new Fork(j));
+			j++;
 		}
 
 		while (i < anz) {
@@ -83,8 +99,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		for (int k = 0; k < seatList.size(); k++) {
 			Seat crntSeat = seatList.get(k);
 			crntSeat.setLeft(forkList.get(k));
-			if (!seatList.get(k).equals(seatList.getLast())) {
-				crntSeat.setRight(seatList.get(k + 1).getLeft());
+			if (!seatList.get(k).equals(seatList.getFirst())) {
+				seatList.get(k-1).setRight(crntSeat.getLeft());
 			} else {
 				// hier die linke gabel vom "nachbartisch auf dem anderen
 				// clietn"
@@ -96,9 +112,14 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		printSeats();
 	}
 	
-	private void printSeats(){
+	private void printSeats() throws RemoteException{
 		for (Seat seat : seatList) {
-			System.out.println("Client: "+ seat.getClient()+ " Sitzid: "+seat.getId()+ " Left: "+ seat.getLeft() + " Right: "+ seat.getRight());
+			System.out.println("Client: "+ seat.getClient().getId() + " Sitzid: "+seat.getId() + " Left: "+ seat.getLeft() + " Right: "+ seat.getRight());
 		}
+	}
+
+	@Override
+	public int getId() throws RemoteException {
+		return this.id;
 	}
 }

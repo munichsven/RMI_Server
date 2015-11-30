@@ -48,7 +48,9 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			Server server = new Server();
 			server.startSemaphore.acquire(2);
 			System.out.println("Semaphor erhalten");
-			
+			for (String string : server.registry.list()) {
+				System.out.println(string);
+			}
 			String client1Name = server.registry.list()[1];
 			String client2Name = server.registry.list()[2];
 			ClientI client1 = (ClientI) server.registry.lookup(client1Name);
@@ -57,7 +59,9 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			client1.createSeats(Constant.SEATS/Constant.CLIENTS);
 			client2.createSeats(Constant.SEATS/Constant.CLIENTS);
 									
-		} catch (RemoteException | InterruptedException | NotBoundException e) {}
+		} catch (RemoteException | InterruptedException | NotBoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public int getRegistry(){

@@ -4,7 +4,7 @@ public class Constant {
 	
 	public static final int PORT = 1099;
 	
-	public static final String IP_SERVER = "192.168.56.102";
+	public static final String IP_SERVER = "192.168.56.101";
 	
 	public static final String IP = "localhost";
 	
@@ -33,10 +33,10 @@ public class Constant {
 	public static final long BAN_FACTOR = 15;
 	
 	
-	private static int id = -1;
+	private static int id = 0;
 	
 	public static int createId(){
-		id++;
+		Constant.id++;
 		return id;
 	}
 }

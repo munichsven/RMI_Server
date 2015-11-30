@@ -7,4 +7,6 @@ public interface ClientI extends Remote{
 	
 	public void createSeats(final int anz)throws RemoteException;
 
+	public int getId() throws RemoteException;
+
 }
