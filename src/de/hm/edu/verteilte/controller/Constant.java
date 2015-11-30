@@ -31,4 +31,12 @@ public class Constant {
 	public static final int EAT_MAX_NORMAL = 3;
 
 	public static final long BAN_FACTOR = 15;
+	
+	
+	private static int id = -1;
+	
+	public static int createId(){
+		id++;
+		return id;
+	}
 }

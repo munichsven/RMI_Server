@@ -1,5 +1,6 @@
 package de.hm.edu.verteilte.server;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -11,7 +12,8 @@ import de.hm.edu.verteilte.controller.Constant;
 
 public class Server extends UnicastRemoteObject implements ServerI{
 	
-	Semaphore startSemaphore = new Semaphore(0);
+	private Semaphore startSemaphore = new Semaphore(0);
+	private Registry registry;
 	
 	protected Server() throws RemoteException {
 		super();
@@ -22,7 +24,7 @@ public class Server extends UnicastRemoteObject implements ServerI{
 	{
 		try
 		{
-			Registry registry = LocateRegistry.createRegistry(Constant.PORT);
+			registry = LocateRegistry.createRegistry(Constant.PORT);
 			registry.rebind("PhilServer", this);
 			System.out.println("Server gestartet");
 		} catch (RemoteException e) {
@@ -46,7 +48,16 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			Server server = new Server();
 			server.startSemaphore.acquire(2);
 			System.out.println("Semaphor erhalten");
-		} catch (RemoteException | InterruptedException e) {}
+			
+			String client1Name = server.registry.list()[1];
+			String client2Name = server.registry.list()[2];
+			ClientI client1 = (ClientI) server.registry.lookup(client1Name);
+			ClientI client2 = (ClientI) server.registry.lookup(client2Name);
+			
+			client1.createSeats(Constant.SEATS/Constant.CLIENTS);
+			client2.createSeats(Constant.SEATS/Constant.CLIENTS);
+									
+		} catch (RemoteException | InterruptedException | NotBoundException e) {}
 	}
 	
 	public int getRegistry(){
@@ -68,8 +79,7 @@ public class Server extends UnicastRemoteObject implements ServerI{
 
 	@Override
 	public boolean insertIntoRegistry(String name, ClientI client) throws RemoteException {
-		Registry tmpReg = LocateRegistry.getRegistry(Constant.PORT);
-		tmpReg.rebind(name, client);
+		registry.rebind(name, client);
 		System.out.println(name + " in Server-Registry eingetragen!");
 		startSemaphore.release();
 		System.out.println("Verfügbare Permits: " + startSemaphore.availablePermits());
