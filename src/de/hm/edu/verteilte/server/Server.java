@@ -20,18 +20,19 @@ public class Server extends UnicastRemoteObject implements ServerI{
 	{
 		try
 		{
-			LocateRegistry.createRegistry(Constant.PORT);
-
+			Registry registry = LocateRegistry.createRegistry(Constant.PORT);
+			registry.rebind("PhilServer", this);
+			System.out.println("Server gestartet");
 		} catch (RemoteException e) {}
 		
-		try {
-			Naming.rebind("PhilServer", this);
-			
-			System.out.println("Server gestartet!");
-		}
-		catch (Exception e) {
-			System.out.println("Server Exception: " + e.getMessage());
-		}
+//		try {
+//			Naming.rebind("PhilServer", this);
+//			
+//			System.out.println("Server gestartet!");
+//		}
+//		catch (Exception e) {
+//			System.out.println("Server Exception: " + e.getMessage());
+//		}
 	}
 	
 	public static void main(String [] args){
