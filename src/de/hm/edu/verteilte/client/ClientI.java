@@ -69,5 +69,21 @@ public interface ClientI extends Remote{
 	 * @param id - id Philosoph
 	 * @throws RemoteException
 	 */
-	void addPhilosoph(int id) throws RemoteException;
+	void addPhilosoph(final int id) throws RemoteException;
+	
+	
+	/**
+	 * Fügt ein Seat zur Laufzeit ein mit übergebener ID.
+	 * @return true wenn es funktioniert hat
+	 * @throws RemoteException
+	 */
+	public boolean integrateSeat(final int id) throws RemoteException;
+	
+	
+	/**
+	 * Löscht einen Sitz vom Tisch 
+	 * @return true wenn es funktioniert hat.
+	 * @throws RemoteException
+	 */
+	public boolean deleteSeat(final int id) throws RemoteException;
 }

@@ -38,6 +38,10 @@ public class Constant {
 
 	private static int NEWID = PHILOSOPHS;
 
+	/**
+	 * Berechnet die jeweiligen id des Philosophen
+	 * @return
+	 */
 	public static int createId() {
 		Constant.NEWID++;
 		return NEWID;

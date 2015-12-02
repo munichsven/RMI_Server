@@ -14,16 +14,24 @@ public class TableMaster extends Thread{
 		minCount = 0;
 	}
 
+	/**
+	 * Geht die kompletten Philosophen durch und überprüft ob eine zu große
+	 * Differenz zwischen ihnen ist.
+	 * Falls ja wird der Philosoph verbannt vom Tisch für eine gewisse Zeit.
+	 */
 	public void run() {
 		while (true) {
 			int[] crntCounts = new int[philList.size()];
 			int i = 0;
+			// Holt sich alle Counter und sotiert diese nach dem kleinesten
 			for (Philosoph crntPhil : philList) {
 				crntCounts[i] = crntPhil.getEatCounter();
 				i++;
 			}
 			Arrays.sort(crntCounts);
 			minCount = crntCounts[0];
+			//Überprüft die jeweiligen Philosophen und berechnet die Differenz zwischen dem wo am
+			//meisten gegessen hat und am wenigstens und liegt den Philosoph gegebenfalls schlafen
 			for (Philosoph crntPhil : philList) {
 				if (crntPhil.getEatCounter() >= minCount + Constant.DIFFERENZ && !crntPhil.isBanned()) {
 					

@@ -29,6 +29,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private int hungryPeople = 0;
 	private String clientName;
 	private String neighborName;
+	private final TableMaster master;
 
 	protected Client() throws RemoteException {
 		super();
@@ -37,6 +38,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		seatList = new LinkedList<Seat>();
 		forkList = new LinkedList<Fork>();
 		philosophList = new ArrayList<Philosoph>();
+		master = new  TableMaster(philosophList);
+		master.start();
 		random = new Random();
 	}
 
@@ -268,6 +271,16 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		Philosoph phil = new Philosoph(this, id, randomHungry(), seatList);
 		philosophList.add(phil);
 		phil.start();
+	}
+
+	@Override
+	public boolean integrateSeat(int id) throws RemoteException {
+		return false;
+	}
+
+	@Override
+	public boolean deleteSeat(int id) throws RemoteException {
+		return false;
 	}
 
 }
