@@ -245,7 +245,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public boolean releaseForkByNeighbor() throws RemoteException {
-		this.seatList.getLast().getRight().getSemaphore().release();
+		this.forkList.getFirst().getSemaphore().release();
 		return true;
 	}
 
