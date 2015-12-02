@@ -168,17 +168,18 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public boolean removePhilosoph(int id) {
-		//1. Prüfen -> Hab ich den Philosophen überhaupt
+		//1. Pruefen -> Hab ich den Philosophen überhaupt
 		boolean philDeleted = false;
 		int i = 0;
-		while(i < philosophList.size()&& !philDeleted){
+		while( !philDeleted && i < philosophList.size()){
 			Philosoph philosoph = philosophList.get(i);
 			if(philosoph.getPhilosophsId() == id){
 				philosoph.setKilled(true);
-				//philosophList.remove(i); //ist das in Ordung, oder brauchen wir ihn noch?
+				philosophList.remove(i); //ist das in Ordung, oder brauchen wir ihn noch?
 				philDeleted = true; //gibt an, das er in nächster Zukunft gelöscht wird
-			System.out.println("Philsoph" + philosoph.getPhilosophsId() + " wurde aus Client:" + this.id + " entfernt");
+				System.out.println("Philsoph" + philosoph.getPhilosophsId() + " wurde aus Client:" + this.id + " entfernt");
 			}
+			i++;
 		}
 		return philDeleted;
 	}

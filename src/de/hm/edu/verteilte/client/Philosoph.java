@@ -141,7 +141,9 @@ public class Philosoph extends Thread{
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Philosoph: "+ this.getName() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
+		System.out.println("Philosoph: "+ this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
+
+		crntSeat.getSemaphore().release();
 		/*
 		getForks(crntSeat);
 		threadBreak(Constants.EAT_LENGTH);
