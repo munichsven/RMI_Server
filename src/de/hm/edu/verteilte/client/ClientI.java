@@ -21,4 +21,6 @@ public interface ClientI extends Remote{
 	public String getClientName() throws RemoteException;
 	
 	public boolean releaseForkByNeighbor() throws RemoteException;
+
+	void addPhilosoph(int id) throws RemoteException;
 }
