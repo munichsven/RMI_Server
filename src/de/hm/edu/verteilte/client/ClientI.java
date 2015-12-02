@@ -12,8 +12,10 @@ public interface ClientI extends Remote{
 	
 	public LinkedList<Seat> getSeatList() throws RemoteException;
 	
-	public void createPhilosophs(final int philosophs);
+	public void createPhilosophs(final int philosophs) throws RemoteException;
 	
-	public void removePhilosoph(final int id);
+	public void removePhilosoph(final int id) throws RemoteException;
+	
+	public boolean occupyForkForNeighbour(final int forkId) throws RemoteException; //Funktion um die benötigte gabel vom Nachbarclient zu holen
 
 }

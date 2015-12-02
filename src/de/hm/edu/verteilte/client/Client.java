@@ -87,6 +87,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		try {
 			new Client();
 		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -169,4 +170,15 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	public void removePhilosoph(int id) {
 		// TODO Auto-generated method stub
 	}
+
+	@Override
+	public boolean occupyForkForNeighbour(int forkId) throws RemoteException {
+		Fork sharedFork = forkList.getFirst();
+		boolean successful = sharedFork.getSemaphore().tryAcquire();
+		return successful;
+	}
+	
+	
+
+
 }

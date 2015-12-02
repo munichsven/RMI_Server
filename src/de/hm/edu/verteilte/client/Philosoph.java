@@ -1,8 +1,10 @@
 package de.hm.edu.verteilte.client;
 
 import java.util.List;
+import java.util.Random;
 
 import de.hm.edu.verteilte.controller.Constant;
+
 
 public class Philosoph extends Thread{
 
@@ -14,12 +16,15 @@ public class Philosoph extends Thread{
 	private int eatCounter;
 	private List<Seat> seatList;
 	private boolean banned = false;
+	private Random random;
 	
 	public Philosoph(final ClientI client, final int id, final boolean hungry, List<Seat> seatList){
+		System.out.println("Philosoph erzeugt: " + id);
 		this.client = client;
 		this.id = id;
 		this.hungry = hungry;
 		this.seatList = seatList;
+		this.random = new Random();
 		
 		counter = 0;
 		eatCounter = 0;
@@ -105,7 +110,47 @@ public class Philosoph extends Thread{
 		return hungry;
 	}
 	
-	public void eat(){
+	public void eat() {
+		boolean seatFound = false;
+		Seat crntSeat = null;
+		int seatCount = seatList.size(); //Sitzabzahl ändert sich möglicherweise
+		final int startIndex = random.nextInt(seatCount);
+		int index = startIndex;
+		int tries = 0;
 		
+		while (!seatFound && tries < 3*seatCount) {
+			crntSeat = seatList.get(index);
+			seatFound = crntSeat.getSemaphore().tryAcquire();
+
+			if (index == seatCount - 1) {
+				index = 0;
+			} else {
+				index++;
+			}
+			tries++;
+		}
+		
+		if(!seatFound){
+			crntSeat = seatList.get(startIndex);
+			try {
+				crntSeat.getSemaphore().acquire(); //in warteschlange anstellen
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Philosoph: "+ this.getName() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
+		/*
+		getForks(crntSeat);
+		threadBreak(Constants.EAT_LENGTH);
+		crntSeat.getLeft().getSemaphore().release();
+		crntSeat.getRight().getSemaphore().release();
+		crntSeat.getSemaphore().release();
+		counter++;
+		eatCounter++;
+		System.out.println("Philosoph " + getPhilosophsId() + " hat an Platz "
+				+ crntSeat.getId() + " zum insg. " + eatCounter
+				+ ". mal gegessen.  :" + isHungry());
+		*/
 	}
 }
