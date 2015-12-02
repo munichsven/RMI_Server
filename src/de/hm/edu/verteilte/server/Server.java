@@ -62,6 +62,10 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			
 			client1.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
 			client2.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
+			
+			client1.addPhilosoph(Constant.createId());
+			client1.addPhilosoph(Constant.createId());
+			client1.addPhilosoph(Constant.createId());
 									
 		} catch (RemoteException | InterruptedException | NotBoundException e) {
 			e.printStackTrace();
