@@ -16,12 +16,10 @@ import de.hm.edu.verteilte.server.ServerI;
 
 public class Client extends UnicastRemoteObject implements ClientI {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private ServerI server;
 	private Registry registry;
+	//Wieviel Sitze
 	private int seats;
 	private LinkedList<Seat> seatList;
 	private LinkedList<Fork> forkList;
@@ -42,6 +40,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		random = new Random();
 	}
 
+	/**
+	 * Registiert sich am Server bzw. in der Registry des Servers
+	 */
 	private void getRegistryAndregisterToServer() {
 		try {
 
@@ -96,6 +97,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		}
 	}
 
+	/**
+	 * Startet den Client
+	 */
 	public static void main(String[] args) {
 		try {
 			new Client();
@@ -106,19 +110,23 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public void createSeats(int anz) throws RemoteException {
+		//Berechnet die passende ID für die jeweiligen Sitze auf den verschieden Clients 
 		int i = id * anz;
 		anz = (id + 1) * anz;
 		int j = i;
 		int anz_j = anz;
+		// Erstellt die linken Gabel des jeweiligen Sitzes
 		while (j < anz_j) {
 			forkList.add(new Fork(j));
 			j++;
 		}
 
+		//Erstellt die Sitze
 		while (i < anz) {
 			seatList.add(new Seat(this, i));
 			i++;
 		}
+		//Legt die Rechte Gabel für den Sitz fest.
 		for (int k = 0; k < seatList.size(); k++) {
 			Seat crntSeat = seatList.get(k);
 			crntSeat.setLeft(forkList.get(k));
@@ -134,6 +142,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		}
 	}
 
+	/**
+	 * Test Methode um die Sitze Ausgeben zu können.
+	 */
 	private void printSeats() throws RemoteException {
 		for (Seat seat : seatList) {
 			System.out.println("Client: " + seat.getClient().getId()
@@ -206,7 +217,6 @@ public class Client extends UnicastRemoteObject implements ClientI {
 					+ neighborClient.getClientName() + "  wirklich?: "
 					+ gotFork);
 		} catch (RemoteException | NotBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return gotFork;
@@ -236,19 +246,17 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public boolean removePhilosoph(int id) {
-		// 1. Pruefen -> Hab ich den Philosophen Ã¼berhaupt
 		boolean philDeleted = false;
 		int i = 0;
 		while (!philDeleted && i < philosophList.size()) {
 			Philosoph philosoph = philosophList.get(i);
+			//Wenn Philosoph gefunden aus List löschen und killed auf true setzen
 			if (philosoph.getPhilosophsId() == id) {
 				philosoph.setKilled(true);
-				philosophList.remove(i); // ist das in Ordung, oder brauchen wir
-											// ihn noch?
-				philDeleted = true; // gibt an, das er in nÃ¤chster Zukunft
-									// gelÃ¶scht wird
 				System.out.println("Philsoph" + philosoph.getPhilosophsId()
-						+ " wurde aus Client:" + this.id + " entfernt");
+				+ " wurde aus Client:" + this.id + " entfernt");
+				philosophList.remove(i); 
+				philDeleted = true;
 			}
 			i++;
 		}

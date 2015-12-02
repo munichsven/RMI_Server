@@ -15,34 +15,66 @@ public class Seat {
 		this.semaphore = new Semaphore(1);
 	}
 
+	/**
+	 * Gibt die ID des Sitzes zurück
+	 * @return
+	 */
 	public int getId() {
 		return id;
 	}
 
+	/**
+	 * Gibt den Semaphoren zurück
+	 * @return
+	 */
 	public Semaphore getSemaphore() {
 		return semaphore;
 	}
 
+	/**
+	 * gibt die Rechte Gabel zurück
+	 * @return
+	 */
 	public Fork getRight() {
 		return right;
 	}
 
+	/**
+	 * Gibt die linke Gabel zurück
+	 * @return
+	 */
 	public Fork getLeft() {
 		return left;
 	}
 
+	/**
+	 * Setzt die Rechte Gabel.
+	 * @param right
+	 */
 	public void setRight(Fork right) {
 		this.right = right;
 	}
 
+	/**
+	 * Setzt die Linke Gabel
+	 * @param left
+	 */
 	public void setLeft(Fork left) {
 		this.left = left;
 	}
 
+	/**
+	 * Setzt den Client
+	 * @param client
+	 */
 	public void setClient(final ClientI client) {
 		this.client = client;
 	}
 
+	/**
+	 * Gibt den Client zurück.
+	 * @return
+	 */
 	public ClientI getClient() {
 		return client;
 	}

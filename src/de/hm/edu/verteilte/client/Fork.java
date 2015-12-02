@@ -11,17 +11,21 @@ public class Fork {
 		this.semaphore = new Semaphore(1);
 	}
 	
+	/**
+	 * @return Gibt Id zurück.
+	 */
 	public int getId() {
 		return id;
 	}
 	
+	/**
+	 * Gibt den Semaphoren zurück
+	 * @return
+	 */
 	public Semaphore getSemaphore() {
 		return semaphore;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -30,9 +34,6 @@ public class Fork {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

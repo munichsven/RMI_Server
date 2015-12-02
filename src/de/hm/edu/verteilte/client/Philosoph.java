@@ -11,11 +11,16 @@ public class Philosoph extends Thread{
 
 	private Client client;
 	private final int id;
+	//Ob Philosoph hungrig ist.
 	private final boolean hungry;
+	//Wie oft der Philosoph essen darf bevor er schlafen gelegt wird.
 	private final int eatMax;
+	//Wie oft der Philosoph gegessen hat
 	private int counter;
+	//Wie oft der Philosoph schon gegessen hat bis er schlaf gelegt wird
 	private int eatCounter;
 	private LinkedList<Seat> seatList;
+	//Ob der Philosoph vom Tisch verbannd wurde da er zuviel gegessen hat
 	private boolean banned = false;
 	private Random random;
 	private boolean killed;
@@ -38,12 +43,14 @@ public class Philosoph extends Thread{
 	
 	public void run() {
 		while (!killed) {
+			// Wenn Philosoph gebannt ist wird extra schlafen gelegt.
 			if (banned) {
 				System.out.println(this.id + " interrupted");
 				banFromTable();
 				while (banned) {
 					banFromTable();
 				}
+				//Andernfalls geht der Philosoph  meditieren und essen.
 			} else {
 				meditate();
 				eat();
@@ -57,7 +64,7 @@ public class Philosoph extends Thread{
 	}
 	
 	/**
-	 * Philosoph schlï¿½ft.
+	 * Philosoph schläft.
 	 */
 	public void regenerate() {
 		threadBreak(Constant.SLEEP_LENGTH);
@@ -77,6 +84,10 @@ public class Philosoph extends Thread{
 		}
 	}
 	
+	/**
+	 * Gibt zurück ob der Philosoph  gebannt ist oder nicht
+	 * @return
+	 */
 	public boolean isBanned() {
 		return banned;
 	}
@@ -116,12 +127,12 @@ public class Philosoph extends Thread{
 	public void eat() {
 		boolean seatFound = false;
 		Seat crntSeat = null;
-		int seatCount = seatList.size(); //Sitzabzahl Ã¤ndert sich mÃ¶glicherweise
+		int seatCount = seatList.size(); 
+		//Setzt den Start Index wo der Philosoph anfängt einen Platz zu suchen
 		final int startIndex = random.nextInt(seatCount);
-		System.out.println("*************************Startindex: " + startIndex + " Philosoph: " + this.getPhilosophsId() );
 		int index = startIndex;
 		int tries = 0;
-		
+		//Geht die verschieden Sitze durch um einen Sitzplatz zu bekommen
 		while (!seatFound && tries < 3*seatCount) {
 			crntSeat = seatList.get(index);
 			seatFound = crntSeat.getSemaphore().tryAcquire();
@@ -146,6 +157,8 @@ public class Philosoph extends Thread{
 		System.out.println("Philosoph: "+ this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
 		getForks(crntSeat);
 		threadBreak(Constant.EAT_LENGTH);
+		//Gibt die Semaphoren zurück damit sich jemand anders wieder hinsetzen kann
+		
 		releaseForks(crntSeat);
 		crntSeat.getSemaphore().release();
 		counter++;
@@ -175,6 +188,8 @@ public class Philosoph extends Thread{
 		boolean hasRight = false;
 		boolean hasBoth = false;
 
+		//solange der Philosoph  nicht beide Gabeln in der Hand hat versucht er
+		//erst die Rechte und dann die Linke zu greifen.
 		while (!hasBoth) {
 			int tries = 0;
 					try {
