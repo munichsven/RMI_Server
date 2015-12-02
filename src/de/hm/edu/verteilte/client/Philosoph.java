@@ -17,6 +17,7 @@ public class Philosoph extends Thread{
 	private List<Seat> seatList;
 	private boolean banned = false;
 	private Random random;
+	private boolean killed;
 	
 	public Philosoph(final ClientI client, final int id, final boolean hungry, List<Seat> seatList){
 		System.out.println("Philosoph erzeugt: " + id);
@@ -25,7 +26,7 @@ public class Philosoph extends Thread{
 		this.hungry = hungry;
 		this.seatList = seatList;
 		this.random = new Random();
-		
+		this.killed = false;
 		counter = 0;
 		eatCounter = 0;
 		if (isHungry())
@@ -35,7 +36,7 @@ public class Philosoph extends Thread{
 	}
 	
 	public void run() {
-		while (true) {
+		while (!killed) {
 			if (banned) {
 				System.out.println(this.id + " interrupted");
 				banFromTable();
@@ -51,6 +52,7 @@ public class Philosoph extends Thread{
 				}
 			}
 		}
+		System.out.println("Thread von Philosoph: " + this.getPhilosophsId() + " wurde beendet!");
 	}
 	
 	/**
@@ -152,5 +154,9 @@ public class Philosoph extends Thread{
 				+ crntSeat.getId() + " zum insg. " + eatCounter
 				+ ". mal gegessen.  :" + isHungry());
 		*/
+	}
+	
+	public void setKilled(boolean killed) {
+		this.killed = killed;
 	}
 }

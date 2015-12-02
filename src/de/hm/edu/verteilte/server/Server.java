@@ -62,6 +62,14 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			
 			client1.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
 			client2.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
+			
+			//nach 5s wird ein Philosoph gelöscht
+			Thread.sleep(5000);
+			int philToDelete = 3; //MAGIC NUMBER! :P
+			boolean deleted = client1.removePhilosoph(philToDelete); //id mitgeben
+			if(!deleted){
+				client2.removePhilosoph(philToDelete);
+			}
 									
 		} catch (RemoteException | InterruptedException | NotBoundException e) {
 			e.printStackTrace();
