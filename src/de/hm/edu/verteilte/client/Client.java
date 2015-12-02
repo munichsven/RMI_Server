@@ -181,45 +181,30 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	@Override
-	public boolean removePhilosoph(int id) {
-		// 1. Prüfen -> Hab ich den Philosophen überhaupt
-		boolean philDeleted = false;
-		int i = 0;
-		while (i < philosophList.size() && !philDeleted) {
-			Philosoph philosoph = philosophList.get(i);
-			if (philosoph.getPhilosophsId() == id) {
-				philosoph.setKilled(true);
-				// philosophList.remove(i); //ist das in Ordung, oder brauchen
-				// wir ihn noch?
-				philDeleted = true; // gibt an, das er in nächster Zukunft
-									// gelöscht wird
-				System.out.println("Philsoph" + philosoph.getPhilosophsId()
-						+ " wurde aus Client:" + this.id + " entfernt");
-			}
-		}
-		return philDeleted;
-	}
-
-	@Override
 	public boolean occupyForkForNeighbour() throws RemoteException {
 		Fork sharedFork = forkList.getFirst();
 		boolean successful = false;
 		try {
-			successful = sharedFork.getSemaphore().tryAcquire(Constant.TIME_TO_GET_RIGHT_FORK, TimeUnit.MILLISECONDS);
+			successful = sharedFork.getSemaphore().tryAcquire(
+					Constant.TIME_TO_GET_RIGHT_FORK, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Obacht! Hier k�nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
+			System.out
+					.println("Obacht! Hier k�nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
 		}
 		return successful;
 	}
 
-	public boolean callNeighborToBlockFork(){
+	public boolean callNeighborToBlockFork() {
 		boolean gotFork = false;
 		try {
-			ClientI neighborClient = (ClientI) this.registry.lookup(neighborName);
+			ClientI neighborClient = (ClientI) this.registry
+					.lookup(neighborName);
 			gotFork = neighborClient.occupyForkForNeighbour();
-			System.out.println("Gabel: " + " vom Nachbarn bekommen: " + neighborClient.getClientName() + "  wirklich?: " + gotFork);
+			System.out.println("Gabel: " + " vom Nachbarn bekommen: "
+					+ neighborClient.getClientName() + "  wirklich?: "
+					+ gotFork);
 		} catch (RemoteException | NotBoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -231,8 +216,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	public String getClientName() throws RemoteException {
 		return this.clientName;
 	}
-	
-	public void callNeighborToReleaseFork(){
+
+	public void callNeighborToReleaseFork() {
 		ClientI neighborClient;
 		try {
 			neighborClient = (ClientI) this.registry.lookup(neighborName);
@@ -250,10 +235,31 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	@Override
+	public boolean removePhilosoph(int id) {
+		// 1. Pruefen -> Hab ich den Philosophen überhaupt
+		boolean philDeleted = false;
+		int i = 0;
+		while (!philDeleted && i < philosophList.size()) {
+			Philosoph philosoph = philosophList.get(i);
+			if (philosoph.getPhilosophsId() == id) {
+				philosoph.setKilled(true);
+				philosophList.remove(i); // ist das in Ordung, oder brauchen wir
+											// ihn noch?
+				philDeleted = true; // gibt an, das er in nächster Zukunft
+									// gelöscht wird
+				System.out.println("Philsoph" + philosoph.getPhilosophsId()
+						+ " wurde aus Client:" + this.id + " entfernt");
+			}
+			i++;
+		}
+		return philDeleted;
+	}
+
+	@Override
 	public void addPhilosoph(final int id) throws RemoteException {
 		Philosoph phil = new Philosoph(this, id, randomHungry(), seatList);
 		philosophList.add(phil);
-		phil.start();	
+		phil.start();
 	}
-	
+
 }
