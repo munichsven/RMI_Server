@@ -16,6 +16,9 @@ public interface ClientI extends Remote{
 	
 	public boolean removePhilosoph(final int id) throws RemoteException;
 	
-	public boolean occupyForkForNeighbour(final int forkId) throws RemoteException; //Funktion um die benötigte gabel vom Nachbarclient zu holen
+	public boolean occupyForkForNeighbour() throws RemoteException; //Funktion um die benötigte gabel vom Nachbarclient zu holen
 
+	public String getClientName() throws RemoteException;
+	
+	public boolean releaseForkByNeighbor() throws RemoteException;
 }

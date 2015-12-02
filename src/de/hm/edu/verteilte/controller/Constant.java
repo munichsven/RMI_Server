@@ -4,7 +4,7 @@ public class Constant {
 	
 	public static final int PORT = 1099;
 	
-	public static final String IP_SERVER = "192.168.56.101";
+	public static final String IP_SERVER = "127.0.0.1";
 	
 	public static final String IP = "localhost";
 	
@@ -12,9 +12,9 @@ public class Constant {
 	//TODO Ungerade zahl
 	public static final int SEATS = 6;
 
-	public static final long EAT_LENGTH = 1;
+	public static final long EAT_LENGTH = 5000;
 	
-	public static final long SLEEP_LENGTH = 10;
+	public static final long SLEEP_LENGTH = 1000;
 	
 	public static final long MEDITATE_LENGTH = 5;
 	

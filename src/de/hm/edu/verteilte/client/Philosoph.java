@@ -1,25 +1,26 @@
 package de.hm.edu.verteilte.client;
 
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import de.hm.edu.verteilte.controller.Constant;
 
 
 public class Philosoph extends Thread{
 
-	private ClientI client;
+	private Client client;
 	private final int id;
 	private final boolean hungry;
 	private final int eatMax;
 	private int counter;
 	private int eatCounter;
-	private List<Seat> seatList;
+	private LinkedList<Seat> seatList;
 	private boolean banned = false;
 	private Random random;
 	private boolean killed;
 	
-	public Philosoph(final ClientI client, final int id, final boolean hungry, List<Seat> seatList){
+	public Philosoph(final Client client, final int id, final boolean hungry, LinkedList<Seat> seatList){
 		System.out.println("Philosoph erzeugt: " + id);
 		this.client = client;
 		this.id = id;
@@ -142,21 +143,73 @@ public class Philosoph extends Thread{
 			}
 		}
 		System.out.println("Philosoph: "+ this.getName() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
-		/*
 		getForks(crntSeat);
-		threadBreak(Constants.EAT_LENGTH);
-		crntSeat.getLeft().getSemaphore().release();
-		crntSeat.getRight().getSemaphore().release();
+		threadBreak(Constant.EAT_LENGTH);
+		releaseForks(crntSeat);
 		crntSeat.getSemaphore().release();
 		counter++;
 		eatCounter++;
 		System.out.println("Philosoph " + getPhilosophsId() + " hat an Platz "
 				+ crntSeat.getId() + " zum insg. " + eatCounter
 				+ ". mal gegessen.  :" + isHungry());
-		*/
 	}
 	
+	private void releaseForks(Seat crntSeat) {
+		Fork left = crntSeat.getLeft();
+		left.getSemaphore().release();
+		if(crntSeat.equals(seatList.getLast())){
+			this.client.callNeighborToReleaseFork();
+		} else {
+			crntSeat.getRight().getSemaphore().release();
+		}
+	}
+
 	public void setKilled(boolean killed) {
 		this.killed = killed;
+	}
+	
+	private boolean getForks(final Seat seat) {
+		Fork left = seat.getLeft();
+		//Fork right = seat.getRight(); //wird jetzt unten gemacht
+		boolean hasRight = false;
+		boolean hasBoth = false;
+
+		while (!hasBoth) {
+			int tries = 0;
+					try {
+						left.getSemaphore().acquire();
+					} catch (InterruptedException e1) {
+						System.out.println("This shouldnt happen.");
+						e1.printStackTrace();
+					}
+				
+			while (!hasRight && tries <= Constant.TRIES_TO_GET_FORK) {
+				//Unterscheidung ob rechte Gabel lokal oder remote liegt
+				if(seat.equals(seatList.getLast())){
+					//TODO
+					hasRight = this.client.callNeighborToBlockFork();
+				}
+				else{
+					try {
+						hasRight = seat.getRight().getSemaphore().tryAcquire(Constant.TIME_UNTIL_NEW_FORKTRY, TimeUnit.MILLISECONDS);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+				tries++;
+			}
+			hasBoth = hasRight;
+			if (!hasBoth) {
+				left.getSemaphore().release();
+				try {
+					Thread.sleep(Constant.TIME_UNTIL_NEW_FORKTRY);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return hasBoth;
 	}
 }

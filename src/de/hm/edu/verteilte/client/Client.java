@@ -9,6 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import de.hm.edu.verteilte.controller.Constant;
 import de.hm.edu.verteilte.server.ServerI;
@@ -28,6 +29,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private int id = 0;
 	private Random random;
 	private int hungryPeople = 0;
+	private String clientName;
+	private String neighborName;
 
 	protected Client() throws RemoteException {
 		super();
@@ -43,7 +46,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		try {
 
 			try {
-				registry = LocateRegistry.getRegistry(Constant.IP_SERVER, Constant.PORT);
+				registry = LocateRegistry.getRegistry(Constant.IP_SERVER,
+						Constant.PORT);
 			} catch (RemoteException e) {
 			}
 
@@ -57,15 +61,17 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		return seatList;
 	}
 
+	// inkl. Benennung des Clients und des rechten Nachbarclients
 	private void register() {
 
 		ClientI stub = (ClientI) this;
-		String name = "PhilClient" + id;
+		clientName = "PhilClient" + id;
 
 		try {
-			registry.lookup(name); // prüfen ob id schon verwendet wird!
+			registry.lookup(clientName); // prüfen ob id schon verwendet wird!
 			id++;
-			name = "PhilClient" + id;
+			neighborName = clientName;
+			clientName = "PhilClient" + id;
 		} catch (AccessException e) {
 			System.out.println("***RegistryFehler");
 		} catch (RemoteException e) {
@@ -73,10 +79,17 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		} catch (NotBoundException e) {
 			// erster Namensvorschlag wird genommen
 			System.out.println(id);
+			int neighborsClientNumber = id + 1;
+			if (neighborsClientNumber == Constant.CLIENTS) {
+				neighborsClientNumber = 0;
+			}
+			neighborName = "PhilClient" + neighborsClientNumber;
 		}
+		System.out.println("Eigener Name: " + this.clientName);
+		System.out.println("Nachbar's Name: " + this.neighborName);
 
 		try {
-			server.insertIntoRegistry(name, stub);
+			server.insertIntoRegistry(this.clientName, stub);
 			System.out.println("Client bei Server eingetragen!");
 		} catch (RemoteException e) {
 			System.out.println("***RegistryFehler");
@@ -123,8 +136,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	private void printSeats() throws RemoteException {
 		for (Seat seat : seatList) {
-			System.out.println("Client: " + seat.getClient().getId() + " Sitzid: " + seat.getId() + " Left: "
-					+ seat.getLeft() + " Right: " + seat.getRight());
+			System.out.println("Client: " + seat.getClient().getId()
+					+ " Sitzid: " + seat.getId() + " Left: " + seat.getLeft()
+					+ " Right: " + seat.getRight());
 		}
 	}
 
@@ -135,9 +149,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public void createPhilosophs(int philosophs) {
-		int i = id*philosophs;
+		int i = id * philosophs;
 		philosophs = (id + 1) * philosophs;
-		
+
 		while (i < philosophs) {
 			Philosoph phil = new Philosoph(this, i, randomHungry(), seatList);
 			philosophList.add(phil);
@@ -147,14 +161,14 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	/**
-	 * �berpr�ft ob die Maximale Anzahl von hungrigen Philosophen erreicht ist,
-	 * wenn nicht wird ein Random boolean zur�ck gegeben.
+	 * �berpr�ft ob die Maximale Anzahl von hungrigen Philosophen erreicht
+	 * ist, wenn nicht wird ein Random boolean zur�ck gegeben.
 	 * 
 	 * @return hungry - gibt zur�ck ob der Philosoph hungrig ist oder nicht.
 	 */
 	private boolean randomHungry() {
 		final boolean hungry;
-		if (hungryPeople < Constant.HUNGRY_PHILOSOPHS/Constant.CLIENTS) {
+		if (hungryPeople < Constant.HUNGRY_PHILOSOPHS / Constant.CLIENTS) {
 			hungry = random.nextBoolean();
 
 			if (hungry) {
@@ -168,29 +182,72 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public boolean removePhilosoph(int id) {
-		//1. Prüfen -> Hab ich den Philosophen überhaupt
+		// 1. Prüfen -> Hab ich den Philosophen überhaupt
 		boolean philDeleted = false;
 		int i = 0;
-		while(i < philosophList.size()&& !philDeleted){
+		while (i < philosophList.size() && !philDeleted) {
 			Philosoph philosoph = philosophList.get(i);
-			if(philosoph.getPhilosophsId() == id){
+			if (philosoph.getPhilosophsId() == id) {
 				philosoph.setKilled(true);
-				//philosophList.remove(i); //ist das in Ordung, oder brauchen wir ihn noch?
-				philDeleted = true; //gibt an, das er in nächster Zukunft gelöscht wird
-			System.out.println("Philsoph" + philosoph.getPhilosophsId() + " wurde aus Client:" + this.id + " entfernt");
+				// philosophList.remove(i); //ist das in Ordung, oder brauchen
+				// wir ihn noch?
+				philDeleted = true; // gibt an, das er in nächster Zukunft
+									// gelöscht wird
+				System.out.println("Philsoph" + philosoph.getPhilosophsId()
+						+ " wurde aus Client:" + this.id + " entfernt");
 			}
 		}
 		return philDeleted;
 	}
 
 	@Override
-	public boolean occupyForkForNeighbour(int forkId) throws RemoteException {
+	public boolean occupyForkForNeighbour() throws RemoteException {
 		Fork sharedFork = forkList.getFirst();
-		boolean successful = sharedFork.getSemaphore().tryAcquire();
+		boolean successful = false;
+		try {
+			successful = sharedFork.getSemaphore().tryAcquire(Constant.TIME_TO_GET_RIGHT_FORK, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Obacht! Hier k�nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
+		}
 		return successful;
 	}
-	
-	
 
+	public boolean callNeighborToBlockFork(){
+		boolean gotFork = false;
+		try {
+			ClientI neighborClient = (ClientI) this.registry.lookup(neighborName);
+			gotFork = neighborClient.occupyForkForNeighbour();
+			System.out.println("Gabel: " + " vom Nachbarn bekommen: " + neighborClient.getClientName() + "  wirklich?: " + gotFork);
+		} catch (RemoteException | NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return gotFork;
+	}
 
+	@Override
+	public String getClientName() throws RemoteException {
+		return this.clientName;
+	}
+	
+	public void callNeighborToReleaseFork(){
+		ClientI neighborClient;
+		try {
+			neighborClient = (ClientI) this.registry.lookup(neighborName);
+			neighborClient.releaseForkByNeighbor();
+		} catch (RemoteException | NotBoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public boolean releaseForkByNeighbor() throws RemoteException {
+		this.seatList.getLast().getRight().getSemaphore().release();
+		return true;
+	}
+
+	
 }
