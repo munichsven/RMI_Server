@@ -118,6 +118,7 @@ public class Philosoph extends Thread{
 		Seat crntSeat = null;
 		int seatCount = seatList.size(); //Sitzabzahl ändert sich möglicherweise
 		final int startIndex = random.nextInt(seatCount);
+		System.out.println("*************************Startindex: " + startIndex + " Philosoph: " + this.getPhilosophsId() );
 		int index = startIndex;
 		int tries = 0;
 		
@@ -138,11 +139,11 @@ public class Philosoph extends Thread{
 			try {
 				crntSeat.getSemaphore().acquire(); //in warteschlange anstellen
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Warten am Platz Abgebrochen!");
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Philosoph: "+ this.getName() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
+		System.out.println("Philosoph: "+ this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
 		getForks(crntSeat);
 		threadBreak(Constant.EAT_LENGTH);
 		releaseForks(crntSeat);

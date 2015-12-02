@@ -12,11 +12,11 @@ public class Constant {
 	// TODO Ungerade zahl
 	public static final int SEATS = 6;
 
-	public static final long EAT_LENGTH = 5000;
+	public static final long EAT_LENGTH = 10;
 
-	public static final long SLEEP_LENGTH = 1000;
+	public static final long SLEEP_LENGTH = 10;
 
-	public static final long MEDITATE_LENGTH = 5;
+	public static final long MEDITATE_LENGTH = 7;
 
 	public static final int DIFFERENZ = 20;
 
