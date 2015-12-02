@@ -190,6 +190,13 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		boolean successful = sharedFork.getSemaphore().tryAcquire();
 		return successful;
 	}
+
+	@Override
+	public void addPhilosoph(final int id) throws RemoteException {
+		Philosoph phil = new Philosoph(this, id, randomHungry(), seatList);
+		philosophList.add(phil);
+		phil.start();	
+	}
 	
 	
 
