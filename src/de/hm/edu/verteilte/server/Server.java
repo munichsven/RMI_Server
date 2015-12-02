@@ -81,7 +81,7 @@ public class Server extends UnicastRemoteObject implements ServerI{
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 		return elementsCnt;
 	}
 
