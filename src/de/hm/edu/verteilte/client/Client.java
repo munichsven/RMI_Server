@@ -220,6 +220,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 					+ neighborClient.getClientName() + "  wirklich?: "
 					+ gotFork);
 		} catch (RemoteException | NotBoundException e) {
+			//hier ist der nachbarclient abgestürzt
+			System.out.println("Client: " + neighborName + " ist ausgefallen!");
 			e.printStackTrace();
 		}
 		return gotFork;
@@ -236,7 +238,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			neighborClient = (ClientI) this.registry.lookup(neighborName);
 			neighborClient.releaseForkByNeighbor();
 		} catch (RemoteException | NotBoundException e1) {
-			// TODO Auto-generated catch block
+			//hier ist der nachbarclient abgestürzt
+			System.out.println("Client: " + neighborName + " ist ausgefallen!");
 			e1.printStackTrace();
 		}
 	}
