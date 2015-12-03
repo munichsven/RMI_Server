@@ -4,7 +4,7 @@ public class Constant {
 
 	public static final int PORT = 1099;
 
-	public static final String IP_SERVER = "192.168.56.101";
+	public static final String IP_SERVER = "127.0.0.1";
 
 	public static final String IP = "localhost";
 
@@ -36,10 +36,13 @@ public class Constant {
 
 	public static final int HUNGRY_PHILOSOPHS = 4;
 
+	public static final long BACKUP_RYTHM = 1000;
+	
 	private static int NEWID = PHILOSOPHS;
 
 	/**
 	 * Berechnet die jeweiligen id des Philosophen
+	 * 
 	 * @return
 	 */
 	public static int createId() {

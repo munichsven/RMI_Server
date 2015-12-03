@@ -59,19 +59,17 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			String client2Name = server.registry.list()[2];
 			ClientI client1 = (ClientI) server.registry.lookup(client1Name);
 			ClientI client2 = (ClientI) server.registry.lookup(client2Name);
-			
-			ArrayList<ClientI> clients = new ArrayList<>();
-			clients.add(client1);
-			clients.add(client2);
-			BackUpThread backUpThread = new BackUpThread(clients);
-			backUpThread.start();
-			
+					
 			//initialisierungsphase, deswegen nicht maximal parallel
 			client1.createSeats(Constant.SEATS/Constant.CLIENTS);
 			client2.createSeats(Constant.SEATS/Constant.CLIENTS);
 			
 			client1.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
 			client2.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
+			
+			BackUpThread backUpThread = new BackUpThread(client1,client2);
+			backUpThread.start();
+			
 			
 			client1.addPhilosoph(Constant.createId());
 			client1.addPhilosoph(Constant.createId());
