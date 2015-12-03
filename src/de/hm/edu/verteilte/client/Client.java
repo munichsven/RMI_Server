@@ -29,7 +29,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private int hungryPeople = 0;
 	private String clientName;
 	private String neighborName;
-	private final TableMaster master;
+	//private final TableMaster master;
 
 	protected Client() throws RemoteException {
 		super();
@@ -38,8 +38,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		seatList = new LinkedList<Seat>();
 		forkList = new LinkedList<Fork>();
 		philosophList = new ArrayList<Philosoph>();
-		master = new  TableMaster(philosophList);
-		master.start();
+		//master = new  TableMaster(philosophList);
+		//master.start();
 		random = new Random();
 	}
 
@@ -113,7 +113,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public void createSeats(int anz) throws RemoteException {
-		//Berechnet die passende ID für die jeweiligen Sitze auf den verschieden Clients 
+		//Berechnet die passende ID fï¿½r die jeweiligen Sitze auf den verschieden Clients 
 		int i = id * anz;
 		anz = (id + 1) * anz;
 		int j = i;
@@ -129,7 +129,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			seatList.add(new Seat(this, i));
 			i++;
 		}
-		//Legt die Rechte Gabel für den Sitz fest.
+		//Legt die Rechte Gabel fï¿½r den Sitz fest.
 		for (int k = 0; k < seatList.size(); k++) {
 			Seat crntSeat = seatList.get(k);
 			crntSeat.setLeft(forkList.get(k));
@@ -146,7 +146,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	/**
-	 * Test Methode um die Sitze Ausgeben zu können.
+	 * Test Methode um die Sitze Ausgeben zu kï¿½nnen.
 	 */
 	private void printSeats() throws RemoteException {
 		for (Seat seat : seatList) {
@@ -205,7 +205,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out
-					.println("Obacht! Hier könnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
+					.println("Obacht! Hier kï¿½nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
 		}
 		return successful;
 	}
@@ -253,7 +253,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		int i = 0;
 		while (!philDeleted && i < philosophList.size()) {
 			Philosoph philosoph = philosophList.get(i);
-			//Wenn Philosoph gefunden aus List löschen und killed auf true setzen
+			//Wenn Philosoph gefunden aus List lï¿½schen und killed auf true setzen
 			if (philosoph.getPhilosophsId() == id) {
 				philosoph.setKilled(true);
 				System.out.println("Philsoph" + philosoph.getPhilosophsId()

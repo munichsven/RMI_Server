@@ -1,5 +1,8 @@
 package de.hm.edu.verteilte.server;
 
+import java.net.MalformedURLException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -91,7 +94,12 @@ public class Server extends UnicastRemoteObject implements ServerI{
 
 	@Override
 	public boolean insertIntoRegistry(String name, ClientI client) throws RemoteException {
-		registry.rebind(name, client);
+		try {
+			Naming.rebind(name, client);
+		} catch (MalformedURLException e) {
+			System.out.println("Bind funzt nicht");
+			e.printStackTrace();
+		}
 		System.out.println(name + " in Server-Registry eingetragen!");
 		startSemaphore.release();
 		System.out.println("Verfügbare Permits: " + startSemaphore.availablePermits());
