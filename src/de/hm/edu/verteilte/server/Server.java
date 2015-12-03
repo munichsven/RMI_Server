@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import de.hm.edu.verteilte.client.ClientI;
@@ -58,6 +59,12 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			String client2Name = server.registry.list()[2];
 			ClientI client1 = (ClientI) server.registry.lookup(client1Name);
 			ClientI client2 = (ClientI) server.registry.lookup(client2Name);
+			
+			ArrayList<ClientI> clients = new ArrayList<>();
+			clients.add(client1);
+			clients.add(client2);
+			BackUpThread backUpThread = new BackUpThread(clients);
+			backUpThread.start();
 			
 			//initialisierungsphase, deswegen nicht maximal parallel
 			client1.createSeats(Constant.SEATS/Constant.CLIENTS);

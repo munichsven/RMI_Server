@@ -19,7 +19,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private static final long serialVersionUID = 1L;
 	private ServerI server;
 	private Registry registry;
-	//Wieviel Sitze
+	// Wieviel Sitze
 	private int seats;
 	private LinkedList<Seat> seatList;
 	private LinkedList<Fork> forkList;
@@ -29,7 +29,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private int hungryPeople = 0;
 	private String clientName;
 	private String neighborName;
-	//private final TableMaster master;
+	// private final TableMaster master;
 
 	protected Client() throws RemoteException {
 		super();
@@ -38,8 +38,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		seatList = new LinkedList<Seat>();
 		forkList = new LinkedList<Fork>();
 		philosophList = new ArrayList<Philosoph>();
-		//master = new  TableMaster(philosophList);
-		//master.start();
+		// master = new TableMaster(philosophList);
+		// master.start();
 		random = new Random();
 	}
 
@@ -50,8 +50,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		try {
 
 			try {
-				registry = LocateRegistry.getRegistry(Constant.IP_SERVER,
-						Constant.PORT);
+				registry = LocateRegistry.getRegistry(Constant.IP_SERVER, Constant.PORT);
 			} catch (RemoteException e) {
 			}
 
@@ -113,7 +112,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public void createSeats(int anz) throws RemoteException {
-		//Berechnet die passende ID f�r die jeweiligen Sitze auf den verschieden Clients 
+		// Berechnet die passende ID f�r die jeweiligen Sitze auf den
+		// verschieden Clients
 		int i = id * anz;
 		anz = (id + 1) * anz;
 		int j = i;
@@ -124,12 +124,12 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			j++;
 		}
 
-		//Erstellt die Sitze
+		// Erstellt die Sitze
 		while (i < anz) {
 			seatList.add(new Seat(this, i));
 			i++;
 		}
-		//Legt die Rechte Gabel f�r den Sitz fest.
+		// Legt die Rechte Gabel f�r den Sitz fest.
 		for (int k = 0; k < seatList.size(); k++) {
 			Seat crntSeat = seatList.get(k);
 			crntSeat.setLeft(forkList.get(k));
@@ -150,9 +150,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	 */
 	private void printSeats() throws RemoteException {
 		for (Seat seat : seatList) {
-			System.out.println("Client: " + seat.getClient().getId()
-					+ " Sitzid: " + seat.getId() + " Left: " + seat.getLeft()
-					+ " Right: " + seat.getRight());
+			System.out.println("Client: " + seat.getClient().getId() + " Sitzid: " + seat.getId() + " Left: "
+					+ seat.getLeft() + " Right: " + seat.getRight());
 		}
 	}
 
@@ -175,8 +174,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	/**
-	 * �berpr�ft ob die Maximale Anzahl von hungrigen Philosophen erreicht
-	 * ist, wenn nicht wird ein Random boolean zur�ck gegeben.
+	 * �berpr�ft ob die Maximale Anzahl von hungrigen Philosophen erreicht ist,
+	 * wenn nicht wird ein Random boolean zur�ck gegeben.
 	 * 
 	 * @return hungry - gibt zur�ck ob der Philosoph hungrig ist oder nicht.
 	 */
@@ -199,13 +198,11 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		Fork sharedFork = forkList.getFirst();
 		boolean successful = false;
 		try {
-			successful = sharedFork.getSemaphore().tryAcquire(
-					Constant.TIME_TO_GET_RIGHT_FORK, TimeUnit.MILLISECONDS);
+			successful = sharedFork.getSemaphore().tryAcquire(Constant.TIME_TO_GET_RIGHT_FORK, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out
-					.println("Obacht! Hier k�nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
+			System.out.println("Obacht! Hier k�nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
 		}
 		return successful;
 	}
@@ -213,15 +210,14 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	public boolean callNeighborToBlockFork() {
 		boolean gotFork = false;
 		try {
-			ClientI neighborClient = (ClientI) this.registry
-					.lookup(neighborName);
+			ClientI neighborClient = (ClientI) this.registry.lookup(neighborName);
 			gotFork = neighborClient.occupyForkForNeighbour();
-			System.out.println("Gabel: " + " vom Nachbarn bekommen: "
-					+ neighborClient.getClientName() + "  wirklich?: "
+			System.out.println("Gabel: " + " vom Nachbarn bekommen: " + neighborClient.getClientName() + "  wirklich?: "
 					+ gotFork);
 		} catch (RemoteException | NotBoundException e) {
-			//hier ist der nachbarclient abgestürzt
+			// hier ist der nachbarclient abgestürzt
 			System.out.println("Client: " + neighborName + " ist ausgefallen!");
+			// this.createPhilosophs(philosophs);
 			e.printStackTrace();
 		}
 		return gotFork;
@@ -238,7 +234,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			neighborClient = (ClientI) this.registry.lookup(neighborName);
 			neighborClient.releaseForkByNeighbor();
 		} catch (RemoteException | NotBoundException e1) {
-			//hier ist der nachbarclient abgestürzt
+			// hier ist der nachbarclient abgestürzt
 			System.out.println("Client: " + neighborName + " ist ausgefallen!");
 			e1.printStackTrace();
 		}
@@ -256,12 +252,13 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		int i = 0;
 		while (!philDeleted && i < philosophList.size()) {
 			Philosoph philosoph = philosophList.get(i);
-			//Wenn Philosoph gefunden aus List l�schen und killed auf true setzen
+			// Wenn Philosoph gefunden aus List l�schen und killed auf true
+			// setzen
 			if (philosoph.getPhilosophsId() == id) {
 				philosoph.setKilled(true);
-				System.out.println("Philsoph" + philosoph.getPhilosophsId()
-				+ " wurde aus Client:" + this.id + " entfernt");
-				philosophList.remove(i); 
+				System.out.println(
+						"Philsoph" + philosoph.getPhilosophsId() + " wurde aus Client:" + this.id + " entfernt");
+				philosophList.remove(i);
 				philDeleted = true;
 			}
 			i++;
@@ -284,6 +281,27 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	@Override
 	public boolean deleteSeat(int id) throws RemoteException {
 		return false;
+	}
+
+	@Override
+	public ArrayList<Philosoph> getBackUpPhilosophs() throws RemoteException {
+		return philosophList;
+	}
+
+	@Override
+	public void pauseEating() throws RemoteException {
+		for (Philosoph philosoph : philosophList) {
+			philosoph.setPaused(true);
+		}
+		System.out.println("Alle Philosophen auf pasuiert gesetzt!");
+	}
+
+	@Override
+	public void reactivateEating() throws RemoteException {
+		for (Philosoph philosoph : philosophList) {
+			philosoph.setPaused(false);
+		}
+		System.out.println("Alle Philosophen von Pause befreit.");
 	}
 
 }

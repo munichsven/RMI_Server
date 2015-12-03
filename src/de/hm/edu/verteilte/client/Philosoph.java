@@ -22,6 +22,7 @@ public class Philosoph extends Thread{
 	private LinkedList<Seat> seatList;
 	//Ob der Philosoph vom Tisch verbannd wurde da er zuviel gegessen hat
 	private boolean banned = false;
+	private boolean paused = false;
 	private Random random;
 	private boolean killed;
 	
@@ -47,7 +48,7 @@ public class Philosoph extends Thread{
 			if (banned) {
 				System.out.println(this.id + " interrupted");
 				banFromTable();
-				while (banned) {
+				while (banned || paused) {
 					banFromTable();
 				}
 				//Andernfalls geht der Philosoph  meditieren und essen.
@@ -64,7 +65,7 @@ public class Philosoph extends Thread{
 	}
 	
 	/**
-	 * Philosoph schläft.
+	 * Philosoph schlï¿½ft.
 	 */
 	public void regenerate() {
 		threadBreak(Constant.SLEEP_LENGTH);
@@ -85,7 +86,7 @@ public class Philosoph extends Thread{
 	}
 	
 	/**
-	 * Gibt zurück ob der Philosoph  gebannt ist oder nicht
+	 * Gibt zurï¿½ck ob der Philosoph  gebannt ist oder nicht
 	 * @return
 	 */
 	public boolean isBanned() {
@@ -128,7 +129,7 @@ public class Philosoph extends Thread{
 		boolean seatFound = false;
 		Seat crntSeat = null;
 		int seatCount = seatList.size(); 
-		//Setzt den Start Index wo der Philosoph anfängt einen Platz zu suchen
+		//Setzt den Start Index wo der Philosoph anfï¿½ngt einen Platz zu suchen
 		final int startIndex = random.nextInt(seatCount);
 		int index = startIndex;
 		int tries = 0;
@@ -157,7 +158,7 @@ public class Philosoph extends Thread{
 		System.out.println("Philosoph: "+ this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
 		getForks(crntSeat);
 		threadBreak(Constant.EAT_LENGTH);
-		//Gibt die Semaphoren zurück damit sich jemand anders wieder hinsetzen kann
+		//Gibt die Semaphoren zurï¿½ck damit sich jemand anders wieder hinsetzen kann
 		
 		releaseForks(crntSeat);
 		crntSeat.getSemaphore().release();
@@ -228,4 +229,14 @@ public class Philosoph extends Thread{
 		}
 		return hasBoth;
 	}
+
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+	
+	
 }
