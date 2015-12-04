@@ -13,17 +13,15 @@ public class BackUpThread extends Thread {
 
 	ClientI client1;
 	ClientI client2;
-	ArrayList<Philosoph> philosophs1;
-	ArrayList<Philosoph> philosophs2;
-	LinkedList<Seat> seats1;
-	LinkedList<Seat> seats2;
+	int[] philosophs1Ids;
+	int[] philosophs2Ids;
+	int[] seats1Ids;
+	int[] seats2Ids;
 
 	public BackUpThread(final ClientI client1, final ClientI client2) {
 		super();
 		this.client1 = client1;
 		this.client2 = client2;
-		System.out.println("BBBBBBBBBBBBBBBBBBBBBB: " + client1);
-		System.out.println("BBBBBBBBBBBBBBBBBBBBBB: " + client2);
 	}
 
 	@Override
@@ -36,8 +34,8 @@ public class BackUpThread extends Thread {
 				e1.printStackTrace();
 			}
 			try {
-				philosophs1 = client1.getPhilosophsList();
-				seats1 = client1.getSeatList();
+				philosophs1Ids = client1.getTableMaster().getPhilIdsBackup();
+				seats1Ids = client1.getSeatIds();
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				System.out.println("***Erster Client nicht erreichbar!");
@@ -45,8 +43,8 @@ public class BackUpThread extends Thread {
 				client1 = null;
 			}
 			try {
-				philosophs2 = client2.getPhilosophsList();
-				seats2 = client2.getSeatList();
+				philosophs2Ids = client2.getTableMaster().getPhilIdsBackup();
+				seats2Ids = client2.getSeatIds();
 			} catch (RemoteException e) {
 				System.out.println("***Zweiter Client nicht erreichbar!");
 				twoClientsRunning = false;
@@ -93,7 +91,7 @@ public class BackUpThread extends Thread {
 		Thread.sleep(5000);
 		System.out.println("***BackUpRoutine wird gestartet! *** 5");
 		try {
-			runningClient.reinitializeSeats(seats1.size() + seats2.size());
+			runningClient.reinitializeSeats(seats1Ids.length + seats2Ids.length);
 			ArrayList<Philosoph> philosophsToAdd = null;
 			if (stoppedClient.getId() < runningClient.getId()) {
 				philosophsToAdd = philosophs1;

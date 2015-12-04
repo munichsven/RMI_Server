@@ -42,7 +42,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private String neighborName;
 
 	private boolean hasNeighborClient;
-	// private final TableMaster master;
+	private final TableMaster master;
 
 	protected Client() throws RemoteException {
 		super();
@@ -51,7 +51,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		seatList = new LinkedList<Seat>();
 		forkList = new LinkedList<Fork>();
 		philosophList = new ArrayList<Philosoph>();
-		// master = new TableMaster(philosophList);
+		master = new TableMaster(philosophList);
 		// master.start();
 		random = new Random();
 	}
@@ -226,6 +226,15 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		}
 		System.out.println("Alle Philosophen von Pause befreit.");
 	}
+	
+	@Override
+	public int[] getSeatIds(){
+		int[] seatIds = new int[this.seatList.size()];
+		for(int i = 0; i < seatList.size(); i++){
+			seatIds[i] = seatList.get(i).getId();
+		}
+		return seatIds;
+	}
 
 	public boolean callNeighborToBlockFork() {
 
@@ -348,4 +357,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		this.hasNeighborClient = hasNeighborClient;
 	}
 
+	public TableMaster getTableMaster() {
+		return master;
+	}
 }

@@ -8,6 +8,8 @@ import de.hm.edu.verteilte.controller.Constant;
 public class TableMaster extends Thread{
 	private ArrayList<Philosoph> philList;
 	private int minCount;
+	private int[] philIdsBackup;
+	private int[] eatCntsBackup; //Info für Backupthread
 
 	public TableMaster(final ArrayList<Philosoph> philList) {
 		this.philList = philList;
@@ -22,12 +24,15 @@ public class TableMaster extends Thread{
 	public void run() {
 		while (true) {
 			int[] crntCounts = new int[philList.size()];
+			philIdsBackup = new int[philList.size()];
 			int i = 0;
 			// Holt sich alle Counter und sotiert diese nach dem kleinesten
 			for (Philosoph crntPhil : philList) {
 				crntCounts[i] = crntPhil.getEatCounter();
+				philIdsBackup[i] = crntPhil.getPhilosophsId();
 				i++;
 			}
+			eatCntsBackup = crntCounts;
 			Arrays.sort(crntCounts);
 			minCount = crntCounts[0];
 			//Überprüft die jeweiligen Philosophen und berechnet die Differenz zwischen dem wo am
@@ -52,5 +57,11 @@ public class TableMaster extends Thread{
 		}
 	}
 
-
+	public int[] getPhilIdsBackup() {
+		return philIdsBackup;
+	}
+	
+	public int[] getEatCntsBackup() {
+		return eatCntsBackup;
+	}
 }
