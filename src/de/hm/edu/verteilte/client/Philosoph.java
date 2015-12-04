@@ -6,27 +6,27 @@ import java.util.concurrent.TimeUnit;
 
 import de.hm.edu.verteilte.controller.Constant;
 
-
-public class Philosoph extends Thread{
+public class Philosoph extends Thread {
 
 	private Client client;
 	private final int id;
-	//Ob Philosoph hungrig ist.
+	// Ob Philosoph hungrig ist.
 	private final boolean hungry;
-	//Wie oft der Philosoph essen darf bevor er schlafen gelegt wird.
+	// Wie oft der Philosoph essen darf bevor er schlafen gelegt wird.
 	private final int eatMax;
-	//Wie oft der Philosoph gegessen hat
+	// Wie oft der Philosoph gegessen hat
 	private int counter;
-	//Wie oft der Philosoph schon gegessen hat bis er schlaf gelegt wird
+	// Wie oft der Philosoph schon gegessen hat bis er schlaf gelegt wird
 	private int eatCounter;
 	private LinkedList<Seat> seatList;
-	//Ob der Philosoph vom Tisch verbannd wurde da er zuviel gegessen hat
+	// Ob der Philosoph vom Tisch verbannd wurde da er zuviel gegessen hat
 	private boolean banned = false;
 	private boolean paused = false;
 	private Random random;
 	private boolean killed;
-	
-	public Philosoph(final Client client, final int id, final boolean hungry, LinkedList<Seat> seatList, final int eatCnt){
+
+	public Philosoph(final Client client, final int id, final boolean hungry, LinkedList<Seat> seatList,
+			final int eatCnt) {
 		System.out.println("Philosoph erzeugt: " + id);
 		this.client = client;
 		this.id = id;
@@ -42,17 +42,17 @@ public class Philosoph extends Thread{
 		else
 			eatMax = Constant.EAT_MAX_NORMAL;
 	}
-	
+
 	public void run() {
 		while (!killed) {
 			// Wenn Philosoph gebannt ist wird extra schlafen gelegt.
-			if (banned) {
-				System.out.println(this.id + " interrupted");
+			if (banned || paused) {
+				System.out.println("***Philosoph " + this.getPhilosophsId() + " pausiert oder ist gebannt.");
 				banFromTable();
 				while (banned || paused) {
 					banFromTable();
 				}
-				//Andernfalls geht der Philosoph  meditieren und essen.
+				// Andernfalls geht der Philosoph meditieren und essen.
 			} else {
 				meditate();
 				eat();
@@ -64,9 +64,9 @@ public class Philosoph extends Thread{
 		}
 		System.out.println("Thread von Philosoph: " + this.getPhilosophsId() + " wurde beendet!");
 	}
-	
+
 	/**
-	 * Philosoph schlï¿½ft.
+	 * Philosoph schläft.
 	 */
 	public void regenerate() {
 		threadBreak(Constant.SLEEP_LENGTH);
@@ -78,16 +78,17 @@ public class Philosoph extends Thread{
 	public void meditate() {
 		threadBreak(Constant.MEDITATE_LENGTH);
 	}
-	
+
 	private void threadBreak(final long timeToBreak) {
 		try {
 			Thread.sleep(timeToBreak);
 		} catch (InterruptedException e) {
 		}
 	}
-	
+
 	/**
-	 * Gibt zurï¿½ck ob der Philosoph  gebannt ist oder nicht
+	 * Gibt zuräck ob der Philosoph gebannt ist oder nicht
+	 * 
 	 * @return
 	 */
 	public boolean isBanned() {
@@ -102,11 +103,12 @@ public class Philosoph extends Thread{
 		try {
 			Thread.sleep(Constant.EAT_LENGTH * Constant.BAN_FACTOR);
 		} catch (InterruptedException e) {
+			System.out.println("***Bann-Fehler!");
 		}
 	}
-	
+
 	/**
-	 * @return counter - gibt den Aktuellen Essenstand des Philosophen zurï¿½ck.
+	 * @return counter - gibt den Aktuellen Essenstand des Philosophen zuräck.
 	 */
 	public int getEatCounter() {
 		return eatCounter;
@@ -125,17 +127,17 @@ public class Philosoph extends Thread{
 	public boolean isHungry() {
 		return hungry;
 	}
-	
+
 	public void eat() {
 		boolean seatFound = false;
 		Seat crntSeat = null;
-		int seatCount = seatList.size(); 
-		//Setzt den Start Index wo der Philosoph anfï¿½ngt einen Platz zu suchen
+		int seatCount = seatList.size();
+		// Setzt den Start Index wo der Philosoph anfängt einen Platz zu suchen
 		final int startIndex = random.nextInt(seatCount);
 		int index = startIndex;
 		int tries = 0;
-		//Geht die verschieden Sitze durch um einen Sitzplatz zu bekommen
-		while (!seatFound && tries < 3*seatCount) {
+		// Geht die verschieden Sitze durch um einen Sitzplatz zu bekommen
+		while (!seatFound && tries < 3 * seatCount) {
 			crntSeat = seatList.get(index);
 			seatFound = crntSeat.getSemaphore().tryAcquire();
 
@@ -146,76 +148,69 @@ public class Philosoph extends Thread{
 			}
 			tries++;
 		}
-		
-		if(!seatFound){
+
+		if (!seatFound) {
 			crntSeat = seatList.get(startIndex);
 			try {
-				crntSeat.getSemaphore().acquire(); //in warteschlange anstellen
+				crntSeat.getSemaphore().acquire(); // in warteschlange anstellen
 			} catch (InterruptedException e) {
-				System.out.println("Warten am Platz Abgebrochen!");
+				System.out.println("***Warteproblem!");
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Philosoph: "+ this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
-		getForks(crntSeat);
-		threadBreak(Constant.EAT_LENGTH);
-		//Gibt die Semaphoren zurï¿½ck damit sich jemand anders wieder hinsetzen kann
-		
-		releaseForks(crntSeat);
-		crntSeat.getSemaphore().release();
-		counter++;
-		eatCounter++;
-		System.out.println("Philosoph " + getPhilosophsId() + " hat an Platz "
-				+ crntSeat.getId() + " zum insg. " + eatCounter
-				+ ". mal gegessen.  :" + isHungry());
+		if (seatFound) {
+			System.out.println("Philosoph: " + this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
+			getForks(crntSeat);
+			threadBreak(Constant.EAT_LENGTH);
+			// Gibt die Semaphoren zuräck damit sich jemand anders wieder
+			// hinsetzen kann
+
+			releaseForks(crntSeat);
+			crntSeat.getSemaphore().release();
+			counter++;
+			eatCounter++;
+			System.out.println("Philosoph " + getPhilosophsId() + " hat an Platz " + crntSeat.getId() + " zum insg. "
+					+ eatCounter + ". mal gegessen.  :" + isHungry());
+		}
 	}
-	
+
 	private void releaseForks(Seat crntSeat) {
 		Fork left = crntSeat.getLeft();
 		left.getSemaphore().release();
-		if(crntSeat.equals(seatList.getLast()) && this.client.hasNeighborClient()){
+		if (crntSeat.equals(seatList.getLast()) && this.client.hasNeighborClient()) {
 			this.client.callNeighborToReleaseFork();
 		} else {
 			crntSeat.getRight().getSemaphore().release();
 		}
 	}
 
-	public void setKilled(boolean killed) {
-		this.killed = killed;
-	}
-	
 	private boolean getForks(final Seat seat) {
 		Fork left = seat.getLeft();
-		//Fork right = seat.getRight(); //wird jetzt unten gemacht
 		boolean hasRight = false;
 		boolean hasBoth = false;
 
-		//solange der Philosoph  nicht beide Gabeln in der Hand hat versucht er
-		//erst die Rechte und dann die Linke zu greifen.
 		while (!hasBoth) {
 			int tries = 0;
-					try {
-						left.getSemaphore().acquire();
-					} catch (InterruptedException e1) {
-						System.out.println("This shouldnt happen.");
-						e1.printStackTrace();
-					}
-				
+			try {
+				left.getSemaphore().acquire();
+			} catch (InterruptedException e1) {
+				System.out.println("This shouldnt happen.");
+				e1.printStackTrace();
+			}
+
 			while (!hasRight && tries <= Constant.TRIES_TO_GET_FORK) {
-				//Unterscheidung ob rechte Gabel lokal oder remote liegt
-				if(seat.equals(seatList.getLast()) && this.client.hasNeighborClient()){
-					//TODO
+				// Unterscheidung ob rechte Gabel lokal oder remote liegt
+				if (seat.equals(seatList.getLast()) && this.client.hasNeighborClient()) {
 					hasRight = this.client.callNeighborToBlockFork();
-				}
-				else{
+				} else {
 					try {
-						hasRight = seat.getRight().getSemaphore().tryAcquire(Constant.TIME_UNTIL_NEW_FORKTRY, TimeUnit.MILLISECONDS);
+						hasRight = seat.getRight().getSemaphore().tryAcquire(Constant.TIME_UNTIL_NEW_FORKTRY,
+								TimeUnit.MILLISECONDS);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				
+
 				tries++;
 			}
 			hasBoth = hasRight;
@@ -238,6 +233,8 @@ public class Philosoph extends Thread{
 	public void setPaused(boolean paused) {
 		this.paused = paused;
 	}
-	
-	
+
+	public void setKilled(boolean killed) {
+		this.killed = killed;
+	}
 }

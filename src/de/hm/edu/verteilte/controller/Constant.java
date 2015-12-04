@@ -14,7 +14,7 @@ public class Constant {
 
 	public static final long EAT_LENGTH = 10;
 
-	public static final long SLEEP_LENGTH = 10;
+	public static final long SLEEP_LENGTH = 50;
 
 	public static final long MEDITATE_LENGTH = 7;
 
@@ -32,11 +32,11 @@ public class Constant {
 
 	public static final long BAN_FACTOR = 15;
 
-	public static final int PHILOSOPHS = 10;
+	public static final int PHILOSOPHS = 6;
 
 	public static final int HUNGRY_PHILOSOPHS = 4;
 
-	public static final long BACKUP_RYTHM = 1000;
+	public static final long BACKUP_RYTHM = 500;
 	
 	private static int NEWID = PHILOSOPHS;
 
