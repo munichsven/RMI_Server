@@ -1,14 +1,12 @@
 package de.hm.edu.verteilte.server;
 
 import java.net.MalformedURLException;
-import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import de.hm.edu.verteilte.client.ClientI;
@@ -59,6 +57,8 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			String client2Name = server.registry.list()[2];
 			ClientI client1 = (ClientI) server.registry.lookup(client1Name);
 			ClientI client2 = (ClientI) server.registry.lookup(client2Name);
+			client1.setHasNeighborClient(true);
+			client2.setHasNeighborClient(true);
 					
 			//initialisierungsphase, deswegen nicht maximal parallel
 			client1.createSeats(Constant.SEATS/Constant.CLIENTS);
@@ -71,9 +71,11 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			backUpThread.start();
 			
 			
-			client1.addPhilosoph(Constant.createId());
-			client1.addPhilosoph(Constant.createId());
-			client1.addPhilosoph(Constant.createId());
+			client1.addPhilosoph(Constant.createId(),0);
+			client1.addPhilosoph(Constant.createId(),0);
+			client1.addPhilosoph(Constant.createId(),0);
+			
+			//Plätze nüssen auch noch dynamisch hnzugefügt werden können
 									
 		} catch (RemoteException | InterruptedException | NotBoundException e) {
 			e.printStackTrace();

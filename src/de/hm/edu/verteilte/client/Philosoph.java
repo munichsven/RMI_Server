@@ -26,13 +26,14 @@ public class Philosoph extends Thread{
 	private Random random;
 	private boolean killed;
 	
-	public Philosoph(final Client client, final int id, final boolean hungry, LinkedList<Seat> seatList){
+	public Philosoph(final Client client, final int id, final boolean hungry, LinkedList<Seat> seatList, final int eatCnt){
 		System.out.println("Philosoph erzeugt: " + id);
 		this.client = client;
 		this.id = id;
 		this.hungry = hungry;
 		this.seatList = seatList;
 		this.random = new Random();
+		this.eatCounter = eatCnt;
 		this.killed = false;
 		counter = 0;
 		eatCounter = 0;
@@ -172,7 +173,7 @@ public class Philosoph extends Thread{
 	private void releaseForks(Seat crntSeat) {
 		Fork left = crntSeat.getLeft();
 		left.getSemaphore().release();
-		if(crntSeat.equals(seatList.getLast())){
+		if(crntSeat.equals(seatList.getLast()) && this.client.hasNeighborClient()){
 			this.client.callNeighborToReleaseFork();
 		} else {
 			crntSeat.getRight().getSemaphore().release();
@@ -202,7 +203,7 @@ public class Philosoph extends Thread{
 				
 			while (!hasRight && tries <= Constant.TRIES_TO_GET_FORK) {
 				//Unterscheidung ob rechte Gabel lokal oder remote liegt
-				if(seat.equals(seatList.getLast())){
+				if(seat.equals(seatList.getLast()) && this.client.hasNeighborClient()){
 					//TODO
 					hasRight = this.client.callNeighborToBlockFork();
 				}

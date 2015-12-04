@@ -29,6 +29,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private int hungryPeople = 0;
 	private String clientName;
 	private String neighborName;
+	private boolean hasNeighborClient;
 	// private final TableMaster master;
 
 	protected Client() throws RemoteException {
@@ -166,7 +167,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		philosophs = (id + 1) * philosophs;
 
 		while (i < philosophs) {
-			Philosoph phil = new Philosoph(this, i, randomHungry(), seatList);
+			Philosoph phil = new Philosoph(this, i, randomHungry(), seatList, 0);
 			philosophList.add(phil);
 			phil.start();
 			i++;
@@ -174,8 +175,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	/**
-	 * �berpr�ft ob die Maximale Anzahl von hungrigen Philosophen erreicht ist,
-	 * wenn nicht wird ein Random boolean zur�ck gegeben.
+	 * �berpr�ft ob die Maximale Anzahl von hungrigen Philosophen erreicht
+	 * ist, wenn nicht wird ein Random boolean zur�ck gegeben.
 	 * 
 	 * @return hungry - gibt zur�ck ob der Philosoph hungrig ist oder nicht.
 	 */
@@ -202,7 +203,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Obacht! Hier k�nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
+			System.out
+					.println("Obacht! Hier k�nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
 		}
 		return successful;
 	}
@@ -267,8 +269,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	@Override
-	public void addPhilosoph(final int id) throws RemoteException {
-		Philosoph phil = new Philosoph(this, id, randomHungry(), seatList);
+	public void addPhilosoph(final int id, final int eatCnt) throws RemoteException {
+		Philosoph phil = new Philosoph(this, id, randomHungry(), seatList, eatCnt);
 		philosophList.add(phil);
 		phil.start();
 	}
@@ -284,7 +286,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	@Override
-	public ArrayList<Philosoph> getBackUpPhilosophs() throws RemoteException {
+	public ArrayList<Philosoph> getPhilosophsList() throws RemoteException {
 		return philosophList;
 	}
 
@@ -304,4 +306,40 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		System.out.println("Alle Philosophen von Pause befreit.");
 	}
 
+	@Override
+	public void reinitializeSeats(int anz) throws RemoteException {
+		this.seatList.removeAll(seatList);
+		this.forkList.removeAll(forkList);
+		System.out.println("Seatlist sollte 0 sein ---> " + seatList.size());
+
+		// Erstellt alle Gabeln
+		for(int i = 0; i < anz; i++ ){
+			forkList.add(new Fork(i));
+		}
+
+		// Erstellt alle Sitze
+		for(int i = 0; i < anz; i++){
+			seatList.add(new Seat(this, i));
+		}
+		
+		//den Sitzen ihre Gabeln zuweisen
+		for(int i = 0; i < anz -1 ; i++){
+			seatList.get(i).setLeft(forkList.get(i));
+			seatList.get(i).setRight(forkList.get(i+1));
+		}
+		seatList.getLast().setLeft(forkList.getLast());
+		seatList.getLast().setRight(forkList.getFirst());
+		
+		this.printSeats(); //Testausgabe
+	}
+
+	@Override
+	public boolean hasNeighborClient() {
+		return hasNeighborClient;
+	}
+
+	public void setHasNeighborClient(boolean hasNeighborClient) {
+		this.hasNeighborClient = hasNeighborClient;
+	}
+	
 }

@@ -70,7 +70,7 @@ public interface ClientI extends Remote{
 	 * @param id - id Philosoph
 	 * @throws RemoteException
 	 */
-	void addPhilosoph(final int id) throws RemoteException;
+	void addPhilosoph(final int id, final int eatCnt) throws RemoteException;
 	
 	
 	/**
@@ -88,9 +88,15 @@ public interface ClientI extends Remote{
 	 */
 	public boolean deleteSeat(final int id) throws RemoteException;
 	
-	public ArrayList<Philosoph> getBackUpPhilosophs() throws RemoteException;
+	public ArrayList<Philosoph> getPhilosophsList() throws RemoteException;
 	
 	public void pauseEating() throws RemoteException;
 	
 	public void reactivateEating() throws RemoteException;
+	
+	public void reinitializeSeats(int anz) throws RemoteException;
+	
+	public boolean hasNeighborClient() throws RemoteException;
+	
+	public void setHasNeighborClient(boolean hasNeighborClient) throws RemoteException;
 }
