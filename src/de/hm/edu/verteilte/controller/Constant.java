@@ -39,8 +39,10 @@ public class Constant {
 	public static final long GET_PHILLIST_RYTHM_INITIAL = 10;
 
 	public static final long BACKUP_RYTHM = 500;
+
+	public static final long TIME_UNTIL_NEW_PHILS_ARE_ADDED = 5000;
 	
-	private static int NEWID = PHILOSOPHS;
+	private static int NEWID = PHILOSOPHS - 1;
 
 	/**
 	 * Berechnet die jeweiligen id des Philosophen

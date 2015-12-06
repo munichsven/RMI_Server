@@ -7,7 +7,7 @@ import java.util.Arrays;
 import de.hm.edu.verteilte.controller.Constant;
 
 public class TableMaster extends Thread {
-	private ArrayList<Philosoph> philList;
+	private ArrayList<Philosoph> philList = new ArrayList<>();
 	private final Client client;
 	private int minCount;
 	private int[] philIdsBackup;

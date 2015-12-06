@@ -70,10 +70,10 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			//BackUpThread backUpThread = new BackUpThread(client1,client2);
 			//backUpThread.start();
 			
-			
+			Thread.sleep(Constant.TIME_UNTIL_NEW_PHILS_ARE_ADDED);
 			client1.addPhilosoph(Constant.createId(),0);
 			client1.addPhilosoph(Constant.createId(),0);
-			client1.addPhilosoph(Constant.createId(),0);
+			//client1.addPhilosoph(Constant.createId(),0);
 			
 			//Plätze nüssen auch noch dynamisch hnzugefügt werden können
 									

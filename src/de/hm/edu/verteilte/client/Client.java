@@ -160,6 +160,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			e.printStackTrace();
 			System.out.println("Obacht! Hier könnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
 		}
+		if(successful){
+			System.out.println("Eigene Gabel wurde für den Nachbarn blockiert!");
+		}
 		return successful;
 	}
 
@@ -177,6 +180,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	@Override
 	public boolean releaseForkByNeighbor() throws RemoteException {
 		this.forkList.getFirst().getSemaphore().release();
+		System.out.println("Eigene Gabel wurde durch den Nachbarn freigegeben.");
 		return true;
 	}
 

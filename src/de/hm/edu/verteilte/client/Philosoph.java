@@ -50,6 +50,7 @@ public class Philosoph extends Thread {
 				System.out.println("***Philosoph " + this.getPhilosophsId() + " pausiert oder ist gebannt.");
 				banFromTable();
 				while (banned || paused) {
+					System.out.println("***Philosoph " + this.getPhilosophsId() + " pausiert oder ist gebannt.");
 					banFromTable();
 				}
 				// Andernfalls geht der Philosoph meditieren und essen.
@@ -133,7 +134,7 @@ public class Philosoph extends Thread {
 		Seat crntSeat = null;
 		int seatCount = seatList.size();
 		// Setzt den Start Index wo der Philosoph anfängt einen Platz zu suchen
-		final int startIndex = random.nextInt(seatCount);
+		int startIndex = random.nextInt(seatCount);
 		int index = startIndex;
 		int tries = 0;
 		// Geht die verschieden Sitze durch um einen Sitzplatz zu bekommen
@@ -152,15 +153,21 @@ public class Philosoph extends Thread {
 		if (!seatFound) {
 			crntSeat = seatList.get(startIndex);
 			try {
+				System.out.println("Philosoph " + this.getPhilosophsId() + " wartet an Platz " + crntSeat.getId());
 				crntSeat.getSemaphore().acquire(); // in warteschlange anstellen
 			} catch (InterruptedException e) {
 				System.out.println("***Warteproblem!");
 				e.printStackTrace();
 			}
+			System.out.println("Philosoph " + this.getPhilosophsId() + " wartete erfolgreich an Platz " + crntSeat.getId());
 		}
 		if (seatFound) {
-			System.out.println("Philosoph: " + this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
-			getForks(crntSeat);
+			System.out.println("Philosoph " + this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
+			boolean forksFound = false;
+			while (!forksFound) {
+				forksFound = getForks(crntSeat);
+			}
+
 			threadBreak(Constant.EAT_LENGTH);
 			// Gibt die Semaphoren zuräck damit sich jemand anders wieder
 			// hinsetzen kann
@@ -178,6 +185,7 @@ public class Philosoph extends Thread {
 		Fork left = crntSeat.getLeft();
 		left.getSemaphore().release();
 		if (crntSeat.equals(seatList.getLast()) && this.client.hasNeighborClient()) {
+			System.out.println("Philosoph " + this.getPhilosophsId() + " gibt Nachbargabel zurück!");
 			this.client.callNeighborToReleaseFork();
 		} else {
 			crntSeat.getRight().getSemaphore().release();
