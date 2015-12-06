@@ -72,6 +72,15 @@ public interface ClientI extends Remote{
 	 */
 	void addPhilosoph(final int id, final int eatCnt) throws RemoteException;
 	
+	/**
+	 * Fügt einen einzelnen neuen Philosophen hinzu nach Absturz eines Clients.
+	 * @param id
+	 * @param eatCnt
+	 * @param isHungry
+	 * @throws RemoteException
+	 */
+	void addPausingPhilosoph(final int id, final int eatCnt, final boolean isHungry) throws RemoteException;
+	
 	
 	/**
 	 * Fï¿½gt ein Seat zur Laufzeit ein mit ï¿½bergebener ID.

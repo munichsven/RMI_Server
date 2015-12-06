@@ -67,8 +67,8 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			client1.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
 			client2.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
 			
-			BackUpThread backUpThread = new BackUpThread(client1,client2);
-			backUpThread.start();
+			//BackUpThread backUpThread = new BackUpThread(client1,client2);
+			//backUpThread.start();
 			
 			
 			client1.addPhilosoph(Constant.createId(),0);

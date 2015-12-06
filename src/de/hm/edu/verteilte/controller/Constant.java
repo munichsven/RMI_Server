@@ -35,6 +35,8 @@ public class Constant {
 	public static final int PHILOSOPHS = 6;
 
 	public static final int HUNGRY_PHILOSOPHS = 4;
+	
+	public static final long GET_PHILLIST_RYTHM_INITIAL = 10;
 
 	public static final long BACKUP_RYTHM = 500;
 	

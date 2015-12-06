@@ -51,14 +51,22 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		seatList = new LinkedList<Seat>();
 		forkList = new LinkedList<Fork>();
 		philosophList = new ArrayList<Philosoph>();
-		master = new TableMaster(philosophList);
-		// master.start();
+		master = new TableMaster(this);
+		master.start();
 		random = new Random();
 	}
 
 	@Override
 	public void addPhilosoph(final int id, final int eatCnt) throws RemoteException {
 		Philosoph phil = new Philosoph(this, id, randomHungry(), seatList, eatCnt);
+		philosophList.add(phil);
+		phil.start();
+	}
+	
+	@Override
+	public void addPausingPhilosoph(final int id, final int eatCnt, final boolean isHungry) throws RemoteException {
+		Philosoph phil = new Philosoph(this, id, isHungry, seatList, eatCnt);
+		phil.setPaused(true);
 		philosophList.add(phil);
 		phil.start();
 	}
@@ -192,6 +200,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		return philDeleted;
 	}
 	
+	/**
+	 * Erzeugt anhand einer übergebenen Anzahl anz, alle Plaetze, inkl. Gabeln neu.
+	 */
 	@Override
 	public void reinitializeSeats(int anz) throws RemoteException {
 		this.seatList.removeAll(seatList);
