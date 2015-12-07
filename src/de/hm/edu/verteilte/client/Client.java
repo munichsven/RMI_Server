@@ -271,6 +271,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	public void reactivateEating() throws RemoteException {
 		for (Philosoph philosoph : philosophList) {
 			philosoph.setPaused(false);
+			System.out.println("Philosoph " + philosoph.getPhilosophsId() + " reaktiviert!");
 		}
 		System.out.println("Alle Philosophen von Pause befreit.");
 	}
@@ -334,11 +335,11 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		this.setHasNeighborClient(false);
 		System.out.println("***Client: " + neighborName + " ist ausgefallen!");
 		e.printStackTrace();
-		try {
-			this.pauseEating();
-		} catch (RemoteException e1) {
-			System.out.println("Sollte nicht passieren!");
-		}
+//		try {
+//			this.pauseEating();
+//		} catch (RemoteException e1) {
+//			System.out.println("Sollte nicht passieren!");
+//		}
 	}
 
 	/**

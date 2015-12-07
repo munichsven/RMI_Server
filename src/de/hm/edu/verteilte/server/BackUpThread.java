@@ -72,7 +72,7 @@ public class BackUpThread extends Thread {
 			try {
 				client1.pauseEating();
 				client1.setHasNeighborClient(false);
-				this.reloadSeatsAndPhilosophs(client1, client2);
+				this.reloadSeatsAndPhilosophs(client1);
 			} catch (RemoteException | InterruptedException e) {
 				System.out.println("Sollte nicht passieren!");
 				e.printStackTrace();
@@ -83,7 +83,7 @@ public class BackUpThread extends Thread {
 				client2.pauseEating();
 				client2.setHasNeighborClient(false);
 				System.out.println("***BackUpRoutine wird gestartet! *** 3");
-				this.reloadSeatsAndPhilosophs(client2, client1);
+				this.reloadSeatsAndPhilosophs(client2);
 			} catch (RemoteException | InterruptedException e) {
 				System.out.println("Sollte nicht passieren!");
 				e.printStackTrace();
@@ -95,12 +95,13 @@ public class BackUpThread extends Thread {
 		// / initialisiert werden
 	}
 
-	private void reloadSeatsAndPhilosophs(ClientI stoppedClient, ClientI runningClient) throws InterruptedException {
+	private void reloadSeatsAndPhilosophs(ClientI runningClient) throws InterruptedException {
 		// Wartezeit eibauen, bis wirklich der komplette Tisch leer ist und die
 		// neuen Sitze erzeugt werden k�nnen
 		System.out.println("***BackUpRoutine wird gestartet! *** 4");
 		try {
-			runningClient.reinitializeSeats(this.seats1Cnt + this.seats2Cnt);
+			//TODO MUSS REIN!!!!!!!!!
+			//runningClient.reinitializeSeats(this.seats1Cnt + this.seats2Cnt);
 			int[] philosophIdsToAdd = null;
 			int[] philosophsEatCntToAdd = null;
 			boolean[] philosophsHungryToAdd = null;
@@ -114,9 +115,9 @@ public class BackUpThread extends Thread {
 				philosophsEatCntToAdd = philosophs2EatCnt;
 				philosophsHungryToAdd = philosophs2Hungry;
 			}
-			for(int i = 0; i < philosophIdsToAdd.length; i++){
-				runningClient.addPausingPhilosoph(philosophIdsToAdd[i], philosophsEatCntToAdd[i], philosophsHungryToAdd[i]);;
-			}
+//			for(int i = 0; i < philosophIdsToAdd.length; i++){
+//				runningClient.addPausingPhilosoph(philosophIdsToAdd[i], philosophsEatCntToAdd[i], philosophsHungryToAdd[i]);;
+//			}
 			System.out.println("***BackUpRoutine wird gestartet! *** 5");
 			runningClient.reactivateEating();
 			System.out.println("***BackUpRoutine erfolgreich beendet!");
