@@ -80,6 +80,8 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			client1.removePhilosoph(2);
 			client1.integrateSeat(Constant.createSeatId());
 			client1.integrateSeat(Constant.createSeatId());
+			client2.deleteSeat();
+			client2.deleteSeat();
 			
 			
 			//Pl�tze n�ssen auch noch dynamisch hnzugef�gt werden k�nnen

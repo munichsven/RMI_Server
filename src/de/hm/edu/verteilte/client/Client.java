@@ -120,8 +120,35 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	@Override
-	public boolean deleteSeat(int id) throws RemoteException {
-		return false;
+	public boolean integrateSeat(int id) throws RemoteException {
+		this.pauseEating();
+		seatList.add(1, new Seat((ClientI) this, id));
+		forkList.add(1, new Fork(id));
+		this.seatList.get(0).setRight(forkList.get(1));
+		this.seatList.get(1).setLeft(forkList.get(1));
+		this.seatList.get(1).setRight(forkList.get(2));
+		for (Philosoph philosoph : philosophList) {
+			philosoph.setSeatList(seatList);
+		}
+		reactivateEating();
+		return true;
+	}
+
+	@Override
+	public boolean deleteSeat() throws RemoteException {
+		boolean deleted = false;
+		if (seatList.size() > 2) {
+			this.pauseEating();
+			seatList.remove(1);
+			forkList.remove(1);
+			seatList.get(0).setRight(forkList.get(1));
+			deleted = true;
+			for(Philosoph philosoph : philosophList){
+				philosoph.setSeatList(seatList);
+			}
+			reactivateEating();
+		}
+		return deleted;
 	}
 
 	@Override
@@ -142,21 +169,6 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	@Override
 	public boolean hasNeighborClient() {
 		return hasNeighborClient;
-	}
-
-	@Override
-	public boolean integrateSeat(int id) throws RemoteException {
-		this.pauseEating();
-		seatList.add(1, new Seat((ClientI)this, id));
-		forkList.add(1, new Fork(id));
-		this.seatList.get(0).setRight(forkList.get(1));
-		this.seatList.get(1).setLeft(forkList.get(1));
-		this.seatList.get(1).setRight(forkList.get(2));		
-		for(Philosoph philosoph : philosophList){
-			philosoph.setSeatList(seatList);
-		}
-		reactivateEating();
-		return true;
 	}
 
 	@Override

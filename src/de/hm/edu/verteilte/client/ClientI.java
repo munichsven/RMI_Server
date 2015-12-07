@@ -95,7 +95,7 @@ public interface ClientI extends Remote{
 	 * @return true wenn es funktioniert hat.
 	 * @throws RemoteException
 	 */
-	public boolean deleteSeat(final int id) throws RemoteException;
+	public boolean deleteSeat() throws RemoteException;
 	
 	public ArrayList<Philosoph> getPhilosophsList() throws RemoteException;
 	
