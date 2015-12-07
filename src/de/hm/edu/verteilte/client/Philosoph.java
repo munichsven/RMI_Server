@@ -127,6 +127,10 @@ public class Philosoph extends Thread {
 	public boolean isHungry() {
 		return hungry;
 	}
+	
+	public void setSeatList(LinkedList<Seat> seatList){
+		this.seatList = seatList;
+	}
 
 	public void eat() {
 		boolean seatFound = false;

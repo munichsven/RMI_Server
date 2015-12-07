@@ -73,7 +73,7 @@ public interface ClientI extends Remote{
 	void addPhilosoph(final int id, final int eatCnt) throws RemoteException;
 	
 	/**
-	 * Fügt einen einzelnen neuen Philosophen hinzu nach Absturz eines Clients.
+	 * Fï¿½gt einen einzelnen neuen Philosophen hinzu nach Absturz eines Clients.
 	 * @param id
 	 * @param eatCnt
 	 * @param isHungry

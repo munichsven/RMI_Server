@@ -43,6 +43,8 @@ public class Constant {
 	public static final long TIME_UNTIL_NEW_PHILS_ARE_ADDED = 5000;
 	
 	private static int NEWID = PHILOSOPHS - 1;
+	private static int NEWID_SEAT = SEATS - 1;
+	private static int NEWID_FORK = SEATS - 1;
 
 	/**
 	 * Berechnet die jeweiligen id des Philosophen
@@ -52,5 +54,15 @@ public class Constant {
 	public static int createId() {
 		Constant.NEWID++;
 		return NEWID;
+	}
+	
+	public static int createSeatId() {
+		Constant.NEWID_SEAT++;
+		return NEWID_SEAT;
+	}
+	
+	public static int createForkId() {
+		Constant.NEWID_FORK++;
+		return NEWID_FORK;
 	}
 }

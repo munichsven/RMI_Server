@@ -62,7 +62,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		philosophList.add(phil);
 		phil.start();
 	}
-	
+
 	@Override
 	public void addPausingPhilosoph(final int id, final int eatCnt, final boolean isHungry) throws RemoteException {
 		Philosoph phil = new Philosoph(this, id, isHungry, seatList, eatCnt);
@@ -146,7 +146,17 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public boolean integrateSeat(int id) throws RemoteException {
-		return false;
+		this.pauseEating();
+		seatList.add(1, new Seat((ClientI)this, id));
+		forkList.add(1, new Fork(id));
+		this.seatList.get(0).setRight(forkList.get(1));
+		this.seatList.get(1).setLeft(forkList.get(1));
+		this.seatList.get(1).setRight(forkList.get(2));		
+		for(Philosoph philosoph : philosophList){
+			philosoph.setSeatList(seatList);
+		}
+		reactivateEating();
+		return true;
 	}
 
 	@Override
@@ -160,7 +170,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			e.printStackTrace();
 			System.out.println("Obacht! Hier k�nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
 		}
-		if(successful){
+		if (successful) {
 			System.out.println("Eigene Gabel wurde f�r den Nachbarn blockiert!");
 		}
 		return successful;
@@ -175,6 +185,14 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			philosoph.setPaused(true);
 		}
 		System.out.println("Alle Philosophen auf pasuiert gesetzt!");
+		try {
+			Thread.sleep(Constant.EAT_LENGTH * philosophList.size());
+			// spätestens dann haben alle Philosophen, die noch in einer
+			// Warteschlange waren gegessen
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -203,9 +221,10 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		}
 		return philDeleted;
 	}
-	
+
 	/**
-	 * Erzeugt anhand einer �bergebenen Anzahl anz, alle Plaetze, inkl. Gabeln neu.
+	 * Erzeugt anhand einer �bergebenen Anzahl anz, alle Plaetze, inkl. Gabeln
+	 * neu.
 	 */
 	@Override
 	public void reinitializeSeats(int anz) throws RemoteException {
@@ -233,7 +252,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 		this.printSeats(); // Testausgabe
 	}
-	
+
 	@Override
 	public void reactivateEating() throws RemoteException {
 		for (Philosoph philosoph : philosophList) {
@@ -241,11 +260,11 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		}
 		System.out.println("Alle Philosophen von Pause befreit.");
 	}
-	
+
 	@Override
-	public int[] getSeatIds(){
+	public int[] getSeatIds() {
 		int[] seatIds = new int[this.seatList.size()];
-		for(int i = 0; i < seatList.size(); i++){
+		for (int i = 0; i < seatList.size(); i++) {
 			seatIds[i] = seatList.get(i).getId();
 		}
 		return seatIds;
@@ -274,7 +293,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			this.handleClientFailure(e1);
 		}
 	}
-	
+
 	public LinkedList<Seat> getSeatList() {
 		return seatList;
 	}
@@ -337,8 +356,6 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		} else
 			return false;
 	}
-
-	
 
 	private void register() {
 		ClientI stub = (ClientI) this;

@@ -71,8 +71,16 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			//backUpThread.start();
 			
 			Thread.sleep(Constant.TIME_UNTIL_NEW_PHILS_ARE_ADDED);
-//			client2.addPhilosoph(Constant.createId(),0);
-//			client1.addPhilosoph(Constant.createId(),0);
+			client2.addPhilosoph(Constant.createId(),0);
+			client1.addPhilosoph(Constant.createId(),0);
+			client2.addPhilosoph(Constant.createId(), 0);
+			client1.addPhilosoph(Constant.createId(), 0);
+			client1.removePhilosoph(0);
+			client1.removePhilosoph(1);
+			client1.removePhilosoph(2);
+			client1.integrateSeat(Constant.createSeatId());
+			client1.integrateSeat(Constant.createSeatId());
+			
 			
 			//Pl�tze n�ssen auch noch dynamisch hnzugef�gt werden k�nnen
 									
