@@ -36,7 +36,6 @@ public class Philosoph extends Thread {
 		this.eatCounter = eatCnt;
 		this.killed = false;
 		counter = 0;
-		eatCounter = 0;
 		if (isHungry())
 			eatMax = Constant.EAT_MAX_HUNGRY;
 		else
@@ -67,7 +66,7 @@ public class Philosoph extends Thread {
 	}
 
 	/**
-	 * Philosoph schläft.
+	 * Philosoph schlï¿½ft.
 	 */
 	public void regenerate() {
 		threadBreak(Constant.SLEEP_LENGTH);
@@ -88,7 +87,7 @@ public class Philosoph extends Thread {
 	}
 
 	/**
-	 * Gibt zuräck ob der Philosoph gebannt ist oder nicht
+	 * Gibt zurï¿½ck ob der Philosoph gebannt ist oder nicht
 	 * 
 	 * @return
 	 */
@@ -109,7 +108,7 @@ public class Philosoph extends Thread {
 	}
 
 	/**
-	 * @return counter - gibt den Aktuellen Essenstand des Philosophen zuräck.
+	 * @return counter - gibt den Aktuellen Essenstand des Philosophen zurï¿½ck.
 	 */
 	public int getEatCounter() {
 		return eatCounter;
@@ -133,12 +132,12 @@ public class Philosoph extends Thread {
 		boolean seatFound = false;
 		Seat crntSeat = null;
 		int seatCount = seatList.size();
-		// Setzt den Start Index wo der Philosoph anfängt einen Platz zu suchen
+		// Setzt den Start Index wo der Philosoph anfï¿½ngt einen Platz zu suchen
 		int startIndex = random.nextInt(seatCount);
 		int index = startIndex;
 		int tries = 0;
 		// Geht die verschieden Sitze durch um einen Sitzplatz zu bekommen
-		while (!seatFound && tries < 3 * seatCount) {
+		while (!seatFound && tries < (3 * seatCount)) {
 			crntSeat = seatList.get(index);
 			seatFound = crntSeat.getSemaphore().tryAcquire();
 
@@ -155,13 +154,14 @@ public class Philosoph extends Thread {
 			try {
 				System.out.println("Philosoph " + this.getPhilosophsId() + " wartet an Platz " + crntSeat.getId());
 				crntSeat.getSemaphore().acquire(); // in warteschlange anstellen
+				seatFound = true;
+				System.out.println("Philosoph " + this.getPhilosophsId() + " wartete erfolgreich an Platz " + crntSeat.getId());
 			} catch (InterruptedException e) {
 				System.out.println("***Warteproblem!");
 				e.printStackTrace();
 			}
-			System.out.println("Philosoph " + this.getPhilosophsId() + " wartete erfolgreich an Platz " + crntSeat.getId());
 		}
-		if (seatFound) {
+		//if (seatFound) { //wir wissen dass wir auf jeden Fall einen gefunden hat !!!!!oben in der !seatFound-if setzten wir seatFound nie auf true
 			System.out.println("Philosoph " + this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
 			boolean forksFound = false;
 			while (!forksFound) {
@@ -169,7 +169,7 @@ public class Philosoph extends Thread {
 			}
 
 			threadBreak(Constant.EAT_LENGTH);
-			// Gibt die Semaphoren zuräck damit sich jemand anders wieder
+			// Gibt die Semaphoren zurï¿½ck damit sich jemand anders wieder
 			// hinsetzen kann
 
 			releaseForks(crntSeat);
@@ -178,14 +178,14 @@ public class Philosoph extends Thread {
 			eatCounter++;
 			System.out.println("Philosoph " + getPhilosophsId() + " hat an Platz " + crntSeat.getId() + " zum insg. "
 					+ eatCounter + ". mal gegessen.  :" + isHungry());
-		}
+		//}
 	}
 
 	private void releaseForks(Seat crntSeat) {
 		Fork left = crntSeat.getLeft();
 		left.getSemaphore().release();
 		if (crntSeat.equals(seatList.getLast()) && this.client.hasNeighborClient()) {
-			System.out.println("Philosoph " + this.getPhilosophsId() + " gibt Nachbargabel zurück!");
+			System.out.println("Philosoph " + this.getPhilosophsId() + " gibt Nachbargabel zurï¿½ck!");
 			this.client.callNeighborToReleaseFork();
 		} else {
 			crntSeat.getRight().getSemaphore().release();

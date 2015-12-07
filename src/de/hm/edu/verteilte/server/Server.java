@@ -71,11 +71,10 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			//backUpThread.start();
 			
 			Thread.sleep(Constant.TIME_UNTIL_NEW_PHILS_ARE_ADDED);
-			client1.addPhilosoph(Constant.createId(),0);
-			client1.addPhilosoph(Constant.createId(),0);
-			//client1.addPhilosoph(Constant.createId(),0);
+//			client2.addPhilosoph(Constant.createId(),0);
+//			client1.addPhilosoph(Constant.createId(),0);
 			
-			//Plätze nüssen auch noch dynamisch hnzugefügt werden können
+			//Plï¿½tze nï¿½ssen auch noch dynamisch hnzugefï¿½gt werden kï¿½nnen
 									
 		} catch (RemoteException | InterruptedException | NotBoundException e) {
 			e.printStackTrace();

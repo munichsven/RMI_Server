@@ -86,7 +86,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public void createSeats(int anz) throws RemoteException {
-		// Berechnet die passende ID für die jeweiligen Sitze auf den
+		// Berechnet die passende ID fï¿½r die jeweiligen Sitze auf den
 		// verschieden Clients
 		int i = clientId * anz;
 		anz = (clientId + 1) * anz;
@@ -103,7 +103,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			seatList.add(new Seat(this, i));
 			i++;
 		}
-		// Legt die Rechte Gabel für den Sitz fest.
+		// Legt die Rechte Gabel fï¿½r den Sitz fest.
 		for (int k = 0; k < seatList.size(); k++) {
 			Seat crntSeat = seatList.get(k);
 			crntSeat.setLeft(forkList.get(k));
@@ -158,10 +158,10 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Obacht! Hier könnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
+			System.out.println("Obacht! Hier kï¿½nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
 		}
 		if(successful){
-			System.out.println("Eigene Gabel wurde für den Nachbarn blockiert!");
+			System.out.println("Eigene Gabel wurde fï¿½r den Nachbarn blockiert!");
 		}
 		return successful;
 	}
@@ -190,7 +190,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		int i = 0;
 		while (!philDeleted && i < philosophList.size()) {
 			Philosoph philosoph = philosophList.get(i);
-			// Wenn Philosoph gefunden aus List lüschen und killed auf true
+			// Wenn Philosoph gefunden aus List lï¿½schen und killed auf true
 			// setzen
 			if (philosoph.getPhilosophsId() == id) {
 				philosoph.setKilled(true);
@@ -205,7 +205,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 	
 	/**
-	 * Erzeugt anhand einer übergebenen Anzahl anz, alle Plaetze, inkl. Gabeln neu.
+	 * Erzeugt anhand einer ï¿½bergebenen Anzahl anz, alle Plaetze, inkl. Gabeln neu.
 	 */
 	@Override
 	public void reinitializeSeats(int anz) throws RemoteException {
@@ -309,7 +309,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	/**
-	 * Test Methode um die Sitze Ausgeben zu können.
+	 * Test Methode um die Sitze Ausgeben zu kï¿½nnen.
 	 */
 	private void printSeats() throws RemoteException {
 		for (Seat seat : seatList) {
@@ -319,10 +319,10 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	/**
-	 * überprüft ob die Maximale Anzahl von hungrigen Philosophen erreicht ist,
-	 * wenn nicht wird ein Random boolean zurück gegeben.
+	 * ï¿½berprï¿½ft ob die Maximale Anzahl von hungrigen Philosophen erreicht ist,
+	 * wenn nicht wird ein Random boolean zurï¿½ck gegeben.
 	 * 
-	 * @return hungry - gibt zurück ob der Philosoph hungrig ist oder nicht.
+	 * @return hungry - gibt zurï¿½ck ob der Philosoph hungrig ist oder nicht.
 	 */
 	private boolean randomHungry() {
 		final boolean hungry;
@@ -344,7 +344,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		ClientI stub = (ClientI) this;
 		clientName = "PhilClient" + clientId;
 		try {
-			registry.lookup(clientName); // prüfen ob id schon verwendet wird!
+			registry.lookup(clientName); // prï¿½fen ob id schon verwendet wird!
 			clientId++;
 			neighborName = clientName;
 			clientName = "PhilClient" + clientId;
