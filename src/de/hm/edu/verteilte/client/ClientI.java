@@ -109,7 +109,7 @@ public interface ClientI extends Remote{
 	
 	public void setHasNeighborClient(boolean hasNeighborClient) throws RemoteException;
 	
-	public TableMaster getTableMaster() throws RemoteException;
+//	public TableMaster getTableMaster() throws RemoteException;
 	
 	public int[] getSeatIds() throws RemoteException;
 }

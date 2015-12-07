@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import de.hm.edu.verteilte.client.ClientI;
+import de.hm.edu.verteilte.client.BackUpI;
 
 
 public interface ServerI extends Remote{
@@ -13,9 +14,11 @@ public interface ServerI extends Remote{
 	 * @throws RemoteException
 	 */
 	boolean insertIntoRegistry(String name, ClientI client) throws RemoteException;
+	
+	boolean insertIntoRegistry(String name, BackUpI master) throws RemoteException;
 
 	/**
-	 * Gibt die Registry des Servers zurück
+	 * Gibt die Registry des Servers zurï¿½ck
 	 * @throws RemoteException
 	 */
 	int getRegistry() throws RemoteException;

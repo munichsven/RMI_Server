@@ -2,11 +2,14 @@ package de.hm.edu.verteilte.server;
 
 import java.rmi.RemoteException;
 
+import de.hm.edu.verteilte.client.BackUpI;
 import de.hm.edu.verteilte.client.ClientI;
 import de.hm.edu.verteilte.controller.Constant;
 
 public class BackUpThread extends Thread {
 
+	BackUpI backUp1;
+	BackUpI backUp2;
 	ClientI client1;
 	ClientI client2;
 	int[] philosophs1Ids;
@@ -15,11 +18,16 @@ public class BackUpThread extends Thread {
 	int[] philosophs2EatCnt;
 	boolean[] philosophs1Hungry;
 	boolean[] philosophs2Hungry;
-	int[] seats1Ids;
-	int[] seats2Ids;
+	int seats1Cnt;
+	int seats2Cnt;
 
-	public BackUpThread(final ClientI client1, final ClientI client2) {
-		super();
+	public BackUpThread(final BackUpI backUp1I, final BackUpI backUp2I, ClientI client1, ClientI client2) {
+		//super();
+		if(backUp1I == null){
+			System.out.println("***BackUpThread Error! ************************");
+		}
+		this.backUp1 = backUp1I;
+		this.backUp2 = backUp2I;
 		this.client1 = client1;
 		this.client2 = client2;
 	}
@@ -34,21 +42,20 @@ public class BackUpThread extends Thread {
 				e1.printStackTrace();
 			}
 			try {
-				philosophs1Ids = client1.getTableMaster().getPhilIdsBackup();
-				philosophs1EatCnt = client1.getTableMaster().getEatCntsBackup();
-				philosophs1Hungry = client1.getTableMaster().getAreHungryBackup();
-				seats1Ids = client1.getSeatIds();
+				philosophs1Ids = backUp1.getPhilIds();
+				philosophs1EatCnt = backUp1.getEatCnts();
+				philosophs1Hungry = backUp1.getAreHungry();
+				seats1Cnt = backUp1.getSeatCnt();
 			} catch (RemoteException e) {
-				e.printStackTrace();
 				System.out.println("***Erster Client nicht erreichbar!");
 				twoClientsRunning = false;
 				client1 = null;
 			}
 			try {
-				philosophs2Ids = client2.getTableMaster().getPhilIdsBackup();
-				philosophs2EatCnt = client2.getTableMaster().getEatCntsBackup();
-				philosophs2Hungry = client2.getTableMaster().getAreHungryBackup();
-				seats2Ids = client2.getSeatIds();
+				philosophs2Ids = backUp2.getPhilIds();
+				philosophs2EatCnt = backUp2.getEatCnts();
+				philosophs2Hungry = backUp2.getAreHungry();
+				seats2Cnt = backUp2.getSeatCnt();
 			} catch (RemoteException e) {
 				System.out.println("***Zweiter Client nicht erreichbar!");
 				twoClientsRunning = false;
@@ -82,29 +89,27 @@ public class BackUpThread extends Thread {
 				e.printStackTrace();
 			}
 		}
-		// wenn der noch laufende Thread dann tatsächlich pasuiert (ggf. noch
+		// wenn der noch laufende Thread dann tatsï¿½chlich pasuiert (ggf. noch
 		// abfrage einbauen)
-		// müssen plätze und philosophen auf dem pausierenden client neu erzeugt
+		// mï¿½ssen plï¿½tze und philosophen auf dem pausierenden client neu erzeugt
 		// / initialisiert werden
 	}
 
 	private void reloadSeatsAndPhilosophs(ClientI stoppedClient, ClientI runningClient) throws InterruptedException {
 		// Wartezeit eibauen, bis wirklich der komplette Tisch leer ist und die
-		// neuen Sitze erzeugt werden können
+		// neuen Sitze erzeugt werden kï¿½nnen
 		System.out.println("***BackUpRoutine wird gestartet! *** 4");
-		Thread.sleep(5000);
-		System.out.println("***BackUpRoutine wird gestartet! *** 5");
 		try {
-			runningClient.reinitializeSeats(seats1Ids.length + seats2Ids.length);
+			runningClient.reinitializeSeats(this.seats1Cnt + this.seats2Cnt);
 			int[] philosophIdsToAdd = null;
 			int[] philosophsEatCntToAdd = null;
 			boolean[] philosophsHungryToAdd = null;
-			if (stoppedClient.getId() < runningClient.getId()) {
+			if (client1 == null) {
 				philosophIdsToAdd = philosophs1Ids;
 				philosophsEatCntToAdd = philosophs1EatCnt;
 				philosophsHungryToAdd = philosophs1Hungry;
 			}
-			else if (stoppedClient.getId() > runningClient.getId()){
+			else if (client2 == null){
 				philosophIdsToAdd = philosophs2Ids;
 				philosophsEatCntToAdd = philosophs2EatCnt;
 				philosophsHungryToAdd = philosophs2Hungry;
@@ -112,7 +117,7 @@ public class BackUpThread extends Thread {
 			for(int i = 0; i < philosophIdsToAdd.length; i++){
 				runningClient.addPausingPhilosoph(philosophIdsToAdd[i], philosophsEatCntToAdd[i], philosophsHungryToAdd[i]);;
 			}
-			System.out.println("***BackUpRoutine wird gestartet! *** 6");
+			System.out.println("***BackUpRoutine wird gestartet! *** 5");
 			runningClient.reactivateEating();
 			System.out.println("***BackUpRoutine erfolgreich beendet!");
 		} catch (RemoteException e) {

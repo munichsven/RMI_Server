@@ -10,6 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.Semaphore;
 
 import de.hm.edu.verteilte.client.ClientI;
+import de.hm.edu.verteilte.client.BackUpI;
 import de.hm.edu.verteilte.controller.Constant;
 
 public class Server extends UnicastRemoteObject implements ServerI{
@@ -67,21 +68,25 @@ public class Server extends UnicastRemoteObject implements ServerI{
 			client1.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
 			client2.createPhilosophs(Constant.PHILOSOPHS/Constant.CLIENTS);
 			
-			//BackUpThread backUpThread = new BackUpThread(client1,client2);
-			//backUpThread.start();
+			String backUpStorage1Name = server.registry.list()[3];
+			String backUpStorage2Name = server.registry.list()[4];
+			BackUpI backUp1I = (BackUpI) server.registry.lookup(backUpStorage1Name);
+			BackUpI backUp2I = (BackUpI) server.registry.lookup(backUpStorage2Name);
+			BackUpThread backUpThread = new BackUpThread(backUp1I, backUp2I, client1, client2);
+			backUpThread.start();
 			
-			Thread.sleep(Constant.TIME_UNTIL_NEW_PHILS_ARE_ADDED);
-			client2.addPhilosoph(Constant.createId(),0);
-			client1.addPhilosoph(Constant.createId(),0);
-			client2.addPhilosoph(Constant.createId(), 0);
-			client1.addPhilosoph(Constant.createId(), 0);
-			client1.removePhilosoph(0);
-			client1.removePhilosoph(1);
-			client1.removePhilosoph(2);
-			client1.integrateSeat(Constant.createSeatId());
-			client1.integrateSeat(Constant.createSeatId());
-			client2.deleteSeat();
-			client2.deleteSeat();
+//			Thread.sleep(Constant.TIME_UNTIL_NEW_PHILS_ARE_ADDED);
+//			client2.addPhilosoph(Constant.createId(),0);
+//			client1.addPhilosoph(Constant.createId(),0);
+//			client2.addPhilosoph(Constant.createId(), 0);
+//			client1.addPhilosoph(Constant.createId(), 0);
+//			client1.removePhilosoph(0);
+//			client1.removePhilosoph(1);
+//			client1.removePhilosoph(2);
+//			client1.integrateSeat(Constant.createSeatId());
+//			client1.integrateSeat(Constant.createSeatId());
+//			client2.deleteSeat();
+//			client2.deleteSeat();
 			
 			
 			//Pl�tze n�ssen auch noch dynamisch hnzugef�gt werden k�nnen
@@ -119,6 +124,18 @@ public class Server extends UnicastRemoteObject implements ServerI{
 		System.out.println(name + " in Server-Registry eingetragen!");
 		startSemaphore.release();
 		System.out.println("Verfügbare Permits: " + startSemaphore.availablePermits());
+		return true;
+	}
+	
+	@Override
+	public boolean insertIntoRegistry(String name, BackUpI master) throws RemoteException {
+		try {
+			Naming.rebind(name, master);
+		} catch (MalformedURLException e) {
+			System.out.println("Bind funktioniert nicht");
+			e.printStackTrace();
+		}
+		System.out.println(name + " in Server-Registry eingetragen!");
 		return true;
 	}
 

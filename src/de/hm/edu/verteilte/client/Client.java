@@ -42,16 +42,18 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private String neighborName;
 
 	private boolean hasNeighborClient;
-	private final TableMaster master;
+	private Thread master;
+	private BackUpStorage backUpStorage;
 
 	protected Client() throws RemoteException {
 		super();
 		getRegistryAndregisterToServer();
-		register();
 		seatList = new LinkedList<Seat>();
 		forkList = new LinkedList<Fork>();
 		philosophList = new ArrayList<Philosoph>();
-		master = new TableMaster(this);
+		backUpStorage = new BackUpStorage(this);
+		master = new TableMaster(this, backUpStorage);
+		register();
 		master.start();
 		random = new Random();
 	}
@@ -391,6 +393,8 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		}
 		try {
 			server.insertIntoRegistry(this.clientName, stub);
+			//TODO Kontrollieren
+			server.insertIntoRegistry("BackUpStorage" + clientId, (BackUpI) backUpStorage);
 			System.out.println("Client bei Server eingetragen!");
 		} catch (RemoteException e) {
 			System.out.println("***RegistryFehler");
@@ -401,7 +405,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		this.hasNeighborClient = hasNeighborClient;
 	}
 
-	public TableMaster getTableMaster() {
-		return master;
-	}
+//	public Thread getTableMaster() {
+//		return master;
+//	}
 }
