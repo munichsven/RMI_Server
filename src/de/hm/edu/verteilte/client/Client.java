@@ -53,6 +53,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		philosophList = new ArrayList<Philosoph>();
 		backUpStorage = new BackUpStorage(this);
 		master = new TableMaster(this, backUpStorage);
+		master.setDaemon(true); //damit er beendet wird, wenn der Client beendet wird
 		register();
 		master.start();
 		random = new Random();
@@ -67,6 +68,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public void addPausingPhilosoph(final int id, final int eatCnt, final boolean isHungry) throws RemoteException {
+		System.out.println("Neuer Philosoph mit ID:" + id + " hinzugefuegt!");
 		Philosoph phil = new Philosoph(this, id, isHungry, seatList, eatCnt);
 		phil.setPaused(true);
 		philosophList.add(phil);
@@ -334,7 +336,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private void handleClientFailure(Exception e) {
 		this.setHasNeighborClient(false);
 		System.out.println("***Client: " + neighborName + " ist ausgefallen!");
-		e.printStackTrace();
+//		e.printStackTrace();
 //		try {
 //			this.pauseEating();
 //		} catch (RemoteException e1) {

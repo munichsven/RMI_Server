@@ -52,6 +52,7 @@ public class Philosoph extends Thread {
 					System.out.println("***Philosoph " + this.getPhilosophsId() + " pausiert oder ist gebannt.");
 					banFromTable();
 				}
+				System.out.println("Philosoph " + this.getPhilosophsId() + " verlässt Banned/Pausiert-Block im Code!");
 				// Andernfalls geht der Philosoph meditieren und essen.
 			} else {
 				meditate();
@@ -127,8 +128,8 @@ public class Philosoph extends Thread {
 	public boolean isHungry() {
 		return hungry;
 	}
-	
-	public void setSeatList(LinkedList<Seat> seatList){
+
+	public void setSeatList(LinkedList<Seat> seatList) {
 		this.seatList = seatList;
 	}
 
@@ -136,7 +137,8 @@ public class Philosoph extends Thread {
 		boolean seatFound = false;
 		Seat crntSeat = null;
 		int seatCount = seatList.size();
-		// Setzt den Start Index wo der Philosoph anfï¿½ngt einen Platz zu suchen
+		// Setzt den Start Index wo der Philosoph anfï¿½ngt einen Platz zu
+		// suchen
 		int startIndex = random.nextInt(seatCount);
 		int index = startIndex;
 		int tries = 0;
@@ -159,19 +161,32 @@ public class Philosoph extends Thread {
 				System.out.println("Philosoph " + this.getPhilosophsId() + " wartet an Platz " + crntSeat.getId());
 				crntSeat.getSemaphore().acquire(); // in warteschlange anstellen
 				seatFound = true;
-				System.out.println("Philosoph " + this.getPhilosophsId() + " wartete erfolgreich an Platz " + crntSeat.getId());
+				System.out.println(
+						"Philosoph " + this.getPhilosophsId() + " wartete erfolgreich an Platz " + crntSeat.getId());
 			} catch (InterruptedException e) {
 				System.out.println("***Warteproblem!");
 				e.printStackTrace();
 			}
 		}
-		//if (seatFound) { //wir wissen dass wir auf jeden Fall einen gefunden hat !!!!!oben in der !seatFound-if setzten wir seatFound nie auf true
-			System.out.println("Philosoph " + this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
-			boolean forksFound = false;
-			while (!forksFound) {
-				forksFound = getForks(crntSeat);
-			}
+		// if (seatFound) { //wir wissen dass wir auf jeden Fall einen gefunden
+		// hat !!!!!oben in der !seatFound-if setzten wir seatFound nie auf true
+		System.out.println("Philosoph " + this.getPhilosophsId() + " hat Sitz gefunden: Nr: " + crntSeat.getId());
+		boolean forksFound = false;
+		boolean exception = false; // Abbruchbedingung wenn Nachbar nicht mehr
+									// erreichbar ist
+		while (!forksFound && !exception) {
+			boolean[] result = getForks(crntSeat);
+			forksFound = result[0];
+			exception = result[1];
+		}
 
+		if (exception) {
+			// hat nicht beide Gabeln => Sitz hergeben und pausieren, weil
+			// Nachbar offentsichtlich ausgefallen ist
+			crntSeat.getSemaphore().release();
+			System.out.println("Philosoph" + this.getPhilosophsId() + " wurde ohne zu Essen vom Tisch entfernt.");
+			this.setPaused(true);
+		} else {
 			threadBreak(Constant.EAT_LENGTH);
 			// Gibt die Semaphoren zurï¿½ck damit sich jemand anders wieder
 			// hinsetzen kann
@@ -182,7 +197,8 @@ public class Philosoph extends Thread {
 			eatCounter++;
 			System.out.println("Philosoph " + getPhilosophsId() + " hat an Platz " + crntSeat.getId() + " zum insg. "
 					+ eatCounter + ". mal gegessen.  :" + isHungry());
-		//}
+		}
+		// }
 	}
 
 	private void releaseForks(Seat crntSeat) {
@@ -196,12 +212,15 @@ public class Philosoph extends Thread {
 		}
 	}
 
-	private boolean getForks(final Seat seat) {
+	private boolean[] getForks(final Seat seat) {
 		Fork left = seat.getLeft();
 		boolean hasRight = false;
 		boolean hasBoth = false;
+		boolean exception = false; // für Abbruchbedingung, falls anfordern der
+									// Gabel scheitert
+		boolean[] hasBoth_exception = new boolean[2];
 
-		while (!hasBoth) {
+		while (!hasBoth && !exception) {
 			int tries = 0;
 			try {
 				left.getSemaphore().acquire();
@@ -212,8 +231,20 @@ public class Philosoph extends Thread {
 
 			while (!hasRight && tries <= Constant.TRIES_TO_GET_FORK) {
 				// Unterscheidung ob rechte Gabel lokal oder remote liegt
-				if (seat.equals(seatList.getLast()) && this.client.hasNeighborClient()) {
-					hasRight = this.client.callNeighborToBlockFork();
+				if (seat.equals(seatList.getLast())) {
+					if (this.client.hasNeighborClient()) {
+						hasRight = this.client.callNeighborToBlockFork();
+					}
+					else{
+						try {
+							hasRight = seat.getRight().getSemaphore().tryAcquire(Constant.TIME_UNTIL_NEW_FORKTRY,
+									TimeUnit.MILLISECONDS);
+						} catch (InterruptedException | NullPointerException e) {
+							System.out.println("***Fehler beim Anfordern der rechten Gabel!");
+							e.printStackTrace();
+							exception = true;
+						}
+					}
 				} else {
 					try {
 						hasRight = seat.getRight().getSemaphore().tryAcquire(Constant.TIME_UNTIL_NEW_FORKTRY,
@@ -235,7 +266,9 @@ public class Philosoph extends Thread {
 				}
 			}
 		}
-		return hasBoth;
+		hasBoth_exception[0] = hasBoth;
+		hasBoth_exception[1] = exception;
+		return hasBoth_exception;
 	}
 
 	public boolean isPaused() {

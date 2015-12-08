@@ -32,7 +32,6 @@ public class TableMaster extends Thread {
 	public void run() {
 		boolean clientIsRunning = true;
 		while (clientIsRunning) {
-
 			while (this.philList.size() <= 0) {
 				try {
 					philList = this.client.getPhilosophsList();
@@ -60,11 +59,10 @@ public class TableMaster extends Thread {
 				areHungryBackup[i] = crntPhil.isHungry();
 				i++;
 			}
-			eatCntsBackup = crntCounts;
 			
-			backUpStorage.setPhilIds(philIdsBackup);
-			backUpStorage.setAreHungry(areHungryBackup);
-			backUpStorage.setEatCnts(eatCntsBackup);
+			backUpStorage.setPhilIds(Arrays.copyOf(philIdsBackup, philIdsBackup.length));
+			backUpStorage.setAreHungry(Arrays.copyOf(areHungryBackup, areHungryBackup.length));
+			backUpStorage.setEatCnts(Arrays.copyOf(crntCounts, crntCounts.length));
 			backUpStorage.setSeatCnt(seatCntBackup);
 			
 			
