@@ -6,26 +6,26 @@ import java.util.Arrays;
 
 import de.hm.edu.verteilte.controller.Constant;
 
-
 public class TableMaster extends Thread {
 	private ArrayList<Philosoph> philList = new ArrayList<>();
 	private final Client client;
 	private int minCount;
 	private int[] philIdsBackup;
-	private boolean[] areHungryBackup; // Info f�r Backupthread
+	private boolean[] areHungryBackup; // Info fuer Backupthread
 	private int seatCntBackup;
 	private final BackUpStorage backUpStorage;
 
-	public TableMaster(final Client client, final BackUpStorage backUpStorage) throws RemoteException {
+	public TableMaster(final Client client, final BackUpStorage backUpStorage)
+			throws RemoteException {
 		this.client = client;
 		this.backUpStorage = backUpStorage;
 		minCount = 0;
 	}
 
 	/**
-	 * Geht die kompletten Philosophen durch und �berpr�ft ob eine zu gro�e
+	 * Geht die kompletten Philosophen durch und ueberprueft ob eine zu grosse
 	 * Differenz zwischen ihnen ist. Falls ja wird der Philosoph verbannt vom
-	 * Tisch f�r eine gewisse Zeit.
+	 * Tisch fuer eine gewisse Zeit.
 	 */
 	public void run() {
 		boolean clientIsRunning = true;
@@ -34,7 +34,8 @@ public class TableMaster extends Thread {
 				try {
 					philList = this.client.getPhilosophsList();
 				} catch (RemoteException e1) {
-					System.out.println("Client des TableMasters wurde beendet!");
+					System.out
+							.println("Client des TableMasters wurde beendet!");
 					clientIsRunning = false;
 				}
 				try {
@@ -48,7 +49,7 @@ public class TableMaster extends Thread {
 			philIdsBackup = new int[philList.size()];
 			areHungryBackup = new boolean[philList.size()];
 			seatCntBackup = this.client.getSeatList().size();
-			
+
 			int i = 0;
 			// Holt sich alle Counter und sotiert diese nach dem kleinesten
 			for (Philosoph crntPhil : philList) {
@@ -57,28 +58,36 @@ public class TableMaster extends Thread {
 				areHungryBackup[i] = crntPhil.isHungry();
 				i++;
 			}
-			
-			backUpStorage.setPhilIds(Arrays.copyOf(philIdsBackup, philIdsBackup.length));
-			backUpStorage.setAreHungry(Arrays.copyOf(areHungryBackup, areHungryBackup.length));
-			backUpStorage.setEatCnts(Arrays.copyOf(crntCounts, crntCounts.length));
+
+			backUpStorage.setPhilIds(Arrays.copyOf(philIdsBackup,
+					philIdsBackup.length));
+			backUpStorage.setAreHungry(Arrays.copyOf(areHungryBackup,
+					areHungryBackup.length));
+			backUpStorage.setEatCnts(Arrays.copyOf(crntCounts,
+					crntCounts.length));
 			backUpStorage.setSeatCnt(seatCntBackup);
-			
-			
+
 			Arrays.sort(crntCounts);
 			minCount = crntCounts[0];
-			// �berpr�ft die jeweiligen Philosophen und berechnet die Differenz
+			// ueberprueft die jeweiligen Philosophen und berechnet die
+			// Differenz
 			// zwischen dem wo am
 			// meisten gegessen hat und am wenigstens und liegt den Philosoph
 			// gegebenfalls schlafen
 			for (Philosoph crntPhil : philList) {
-				if (crntPhil.getEatCounter() >= minCount + Constant.DIFFERENZ && !crntPhil.isBanned()) {
+				if (crntPhil.getEatCounter() >= minCount + Constant.DIFFERENZ
+						&& !crntPhil.isBanned()) {
 
 					crntPhil.setBanned(true);
-					System.out.println("Phil " + crntPhil.getPhilosophsId() + " wird demn�chst gebannt! Essvorg�nge "
+					System.out.println("Phil " + crntPhil.getPhilosophsId()
+							+ " wird demnaechst gebannt! Essvorgaenge: "
 							+ crntPhil.getEatCounter() + " / " + minCount);
-				} else if (crntPhil.getEatCounter() < minCount + Constant.DIFFERENZ && crntPhil.isBanned()) {
+				} else if (crntPhil.getEatCounter() < minCount
+						+ Constant.DIFFERENZ
+						&& crntPhil.isBanned()) {
 					crntPhil.setBanned(false);
-					System.out.println("Phil " + crntPhil.getPhilosophsId() + " wurde entbannt!");
+					System.out.println("Phil " + crntPhil.getPhilosophsId()
+							+ " wurde entbannt!");
 				}
 			}
 			try {
@@ -95,5 +104,4 @@ public class TableMaster extends Thread {
 			}
 		}
 	}
-
 }

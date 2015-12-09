@@ -40,9 +40,7 @@ public class Server extends UnicastRemoteObject implements ServerI {
 		try {
 			Server server = new Server();
 			server.startSemaphore.acquire(2);
-			for (String string : server.registry.list()) {
-				System.out.println(string);
-			}
+
 			String client1Name = server.registry.list()[1];
 			String client2Name = server.registry.list()[2];
 			ClientI client1 = (ClientI) server.registry.lookup(client1Name);

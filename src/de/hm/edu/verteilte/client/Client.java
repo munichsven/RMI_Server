@@ -97,7 +97,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public void createSeats(int anz) throws RemoteException {
-		// Berechnet die passende ID fï¿½r die jeweiligen Sitze auf den
+		// Berechnet die passende ID fuer die jeweiligen Sitze auf den
 		// verschieden Clients
 		int i = clientId * anz;
 		anz = (clientId + 1) * anz;
@@ -114,19 +114,13 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			seatList.add(new Seat(this, i));
 			i++;
 		}
-		// Legt die Rechte Gabel fï¿½r den Sitz fest.
+		// Legt die Rechte Gabel fuer den Sitz fest.
 		for (int k = 0; k < seatList.size(); k++) {
 			Seat crntSeat = seatList.get(k);
 			crntSeat.setLeft(forkList.get(k));
 			if (!seatList.get(k).equals(seatList.getFirst())) {
 				seatList.get(k - 1).setRight(crntSeat.getLeft());
-			} else {
-				// hier die linke gabel vom "nachbartisch auf dem anderen
-				// clietn"
-				// darf an aber erst machen, wenn man sicher ist, dass der Platz
-				// mit der
-				// Gabel auf dem anderen Client schon vorhanden ist
-			}
+			} 
 		}
 	}
 
@@ -139,7 +133,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		this.seatList.get(0).setRight(forkList.get(1));
 		this.seatList.get(1).setLeft(forkList.get(1));
 		this.seatList.get(1).setRight(forkList.get(2));
-		//Informiert die Philosophen ï¿½ber die neuen Sitze
+		//Informiert die Philosophen ueber die neuen Sitze
 		for (Philosoph philosoph : philosophList) {
 			philosoph.setSeatList(seatList);
 		}
@@ -156,7 +150,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			forkList.remove(1);
 			seatList.get(0).setRight(forkList.get(1));
 			deleted = true;
-			//Informiert die Philosophen ï¿½ber die neuen Sitze
+			//Informiert die Philosophen ueber die neuen Sitze
 			for(Philosoph philosoph : philosophList){
 				philosoph.setSeatList(seatList);
 			}
@@ -195,10 +189,10 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Obacht! Hier kï¿½nnte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
+			System.out.println("Obacht! Hier koennte noch ein Problem mit dem Semaphor und der boolean-Var. vorliegen!");
 		}
 		if (successful) {
-			System.out.println("Eigene Gabel wurde fï¿½r den Nachbarn blockiert!");
+			System.out.println("Eigene Gabel wurde fuer den Nachbarn blockiert!");
 		}
 		return successful;
 	}
@@ -236,7 +230,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		int i = 0;
 		while (!philDeleted && i < philosophList.size()) {
 			Philosoph philosoph = philosophList.get(i);
-			// Wenn Philosoph gefunden aus List lï¿½schen und killed auf true
+			// Wenn Philosoph gefunden aus List löschen und killed auf true
 			// setzen
 			if (philosoph.getPhilosophsId() == id) {
 				philosoph.setKilled(true);
@@ -385,7 +379,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		ClientI stub = (ClientI) this;
 		clientName = "PhilClient" + clientId;
 		try {
-			registry.lookup(clientName); // prï¿½fen ob id schon verwendet wird!
+			registry.lookup(clientName); // prüfen ob id schon verwendet wird!
 			clientId++;
 			neighborName = clientName;
 			clientName = "PhilClient" + clientId;
