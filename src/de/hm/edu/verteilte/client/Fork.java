@@ -12,14 +12,14 @@ public class Fork {
 	}
 	
 	/**
-	 * @return Gibt Id zurück.
+	 * @return Gibt Id zurueck.
 	 */
 	public int getId() {
 		return id;
 	}
 	
 	/**
-	 * Gibt den Semaphoren zurück
+	 * Gibt den Semaphoren zurueck
 	 * @return
 	 */
 	public Semaphore getSemaphore() {

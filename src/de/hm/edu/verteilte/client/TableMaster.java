@@ -1,19 +1,17 @@
 package de.hm.edu.verteilte.client;
 
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import de.hm.edu.verteilte.controller.Constant;
-import sun.security.util.ManifestEntryVerifier;
+
 
 public class TableMaster extends Thread {
 	private ArrayList<Philosoph> philList = new ArrayList<>();
 	private final Client client;
 	private int minCount;
 	private int[] philIdsBackup;
-	private int[] eatCntsBackup;
 	private boolean[] areHungryBackup; // Info f�r Backupthread
 	private int seatCntBackup;
 	private final BackUpStorage backUpStorage;

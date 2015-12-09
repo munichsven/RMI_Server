@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 public interface BackUpI extends Remote{
 
 	/**
-	 *  Gibt die Liste der IDs der Philiosophen zurück falls ein Client ausfällt.
+	 *  Gibt die Liste der IDs der Philiosophen zurueck falls ein Client ausfaellt.
 	 * @return Liste von den IDs der Philiosophen
 	 * @throws RemoteException
 	 */
@@ -14,7 +14,7 @@ public interface BackUpI extends Remote{
 
 
 	/**
-	 *  Um die Philsids regelmäßig zu aktualieseren werden ständig die Philids gesetzt.
+	 *  Um die Philsids regelmaessig zu aktualieseren werden staendig die Philids gesetzt.
 	 * @param Liste von den IDs der Philiosophen
 	 * @throws RemoteException
 	 */
@@ -22,35 +22,35 @@ public interface BackUpI extends Remote{
 
 
 	/**
-	 *  Gibt die Liste der Eatcounter  der Philiosophen zurück falls ein Client ausfällt.
+	 *  Gibt die Liste der Eatcounter  der Philiosophen zurueck falls ein Client ausfaellt.
 	 * @return Liste der Eatcounter der Philiosophen
 	 * @throws RemoteException
 	 */
 	public int[] getEatCnts()throws RemoteException;
 
 	/**
-	 * Um die Eatcounter regelmäßig zu aktualieseren werden ständig die Philids gesetzt.
+	 * Um die Eatcounter regelmaessig zu aktualieseren werden staendig die Philids gesetzt.
 	 * @param eatCnts - Liste der aktuellen Eatcounts
 	 * @throws RemoteException
 	 */
 	public void setEatCnts(int[] eatCnts) throws RemoteException;
 
 	/**
-	 * Gibt eine Liste der Philiosophen zurück welcher von ihnen hungrig ist, falls ein Client ausfällt.
+	 * Gibt eine Liste der Philiosophen zurueck welcher von ihnen hungrig ist, falls ein Client ausfaellt.
 	 * @return Liste welcher Philiosoph hungrig ist.
 	 * @throws RemoteException
 	 */
 	public boolean[] getAreHungry()throws RemoteException;
 
 	/**
-	 * Um die Eatcounter regelmäßig zu aktualieseren werden ständig die Philids gesetzt.
+	 * Um die Eatcounter regelmaessig zu aktualieseren werden staendig die Philids gesetzt.
 	 * @param areHungry - Liste von hungrigen Phils
 	 * @throws RemoteException
 	 */
 	public void setAreHungry(boolean[] areHungry)throws RemoteException;
 
 	/**
-	 * Gibt die Anzahl der Sitze zurück fals ein Client ausfällt.
+	 * Gibt die Anzahl der Sitze zurueck fals ein Client ausfaellt.
 	 * @return - Anzahl Sitze
 	 * @throws RemoteException
 	 */

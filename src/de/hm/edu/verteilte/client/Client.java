@@ -26,7 +26,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			new Client();
 		} catch (RemoteException e) {
 			e.printStackTrace();
-			System.out.println("***Fehler beim Erstellen des Clients");
+			System.out.println("Fehler beim Erstellen des Clients");
 		}
 	}
 
@@ -45,9 +45,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private String clientName;
 	private String neighborName;
 
-	//Für spätere Client ausfälle ob es noch einen CLient gibt.
+	//Fuer Clientausfaelle
 	private boolean hasNeighborClient;
-	//Table Master der überprüft ob die Eatcounter gleichverteilt sind.
+	//Table Master, der ueberprueft ob die Eatcounter gleichverteilt sind.
 	private Thread master;
 	private BackUpStorage backUpStorage;
 
@@ -139,7 +139,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		this.seatList.get(0).setRight(forkList.get(1));
 		this.seatList.get(1).setLeft(forkList.get(1));
 		this.seatList.get(1).setRight(forkList.get(2));
-		//Informiert die Philosophen über die neuen Sitze
+		//Informiert die Philosophen ï¿½ber die neuen Sitze
 		for (Philosoph philosoph : philosophList) {
 			philosoph.setSeatList(seatList);
 		}
@@ -156,7 +156,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			forkList.remove(1);
 			seatList.get(0).setRight(forkList.get(1));
 			deleted = true;
-			//Informiert die Philosophen über die neuen Sitze
+			//Informiert die Philosophen ï¿½ber die neuen Sitze
 			for(Philosoph philosoph : philosophList){
 				philosoph.setSeatList(seatList);
 			}
@@ -251,7 +251,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	/**
-	 * Erzeugt anhand einer ï¿½bergebenen Anzahl anz, alle Plaetze, inkl. Gabeln
+	 * Erzeugt anhand einer uebergebenen Anzahl anz, alle Plaetze, inkl. Gabeln
 	 * neu.
 	 */
 	@Override
@@ -352,7 +352,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	/**
-	 * Test Methode um die Sitze Ausgeben zu kï¿½nnen.
+	 * Test Methode um die Sitze Ausgeben zu koennen.
 	 */
 	private void printSeats() throws RemoteException {
 		for (Seat seat : seatList) {
@@ -362,10 +362,10 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	/**
-	 * ï¿½berprï¿½ft ob die Maximale Anzahl von hungrigen Philosophen erreicht ist,
-	 * wenn nicht wird ein Random boolean zurï¿½ck gegeben.
+	 * Ueberprueft ob die Maximale Anzahl von hungrigen Philosophen erreicht ist,
+	 * wenn nicht wird ein Random boolean zurueck gegeben.
 	 * 
-	 * @return hungry - gibt zurï¿½ck ob der Philosoph hungrig ist oder nicht.
+	 * @return hungry - gibt zurueck ob der Philosoph hungrig ist oder nicht.
 	 */
 	private boolean randomHungry() {
 		final boolean hungry;
@@ -403,7 +403,6 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		}
 		try {
 			server.insertIntoRegistry(this.clientName, stub);
-			//TODO Kontrollieren
 			server.insertIntoRegistry("BackUpStorage" + clientId, (BackUpI) backUpStorage);
 			System.out.println("Client bei Server eingetragen!");
 		} catch (RemoteException e) {

@@ -6,7 +6,11 @@ import java.rmi.RemoteException;
 import de.hm.edu.verteilte.client.ClientI;
 import de.hm.edu.verteilte.client.BackUpI;
 
-
+/**
+ * Interface für den Server.
+ * @author benutzer
+ *
+ */
 public interface ServerI extends Remote{
 	
 	/**
@@ -22,7 +26,7 @@ public interface ServerI extends Remote{
 	boolean insertIntoRegistry(String name, BackUpI master) throws RemoteException;
 
 	/**
-	 * Gibt die Registry des Servers zur�ck
+	 * Gibt die Registry des Servers zurueck
 	 * @throws RemoteException
 	 */
 	int getRegistry() throws RemoteException;

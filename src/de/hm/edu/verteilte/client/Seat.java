@@ -16,7 +16,7 @@ public class Seat {
 	}
 
 	/**
-	 * Gibt die ID des Sitzes zurück
+	 * Gibt die ID des Sitzes zurueck
 	 * @return
 	 */
 	public int getId() {
@@ -24,7 +24,7 @@ public class Seat {
 	}
 
 	/**
-	 * Gibt den Semaphoren zurück
+	 * Gibt den Semaphoren zurueck
 	 * @return
 	 */
 	public Semaphore getSemaphore() {
@@ -32,7 +32,7 @@ public class Seat {
 	}
 
 	/**
-	 * gibt die Rechte Gabel zurück
+	 * gibt die Rechte Gabel zurueck
 	 * @return
 	 */
 	public Fork getRight() {
@@ -40,7 +40,7 @@ public class Seat {
 	}
 
 	/**
-	 * Gibt die linke Gabel zurück
+	 * Gibt die linke Gabel zurueck
 	 * @return
 	 */
 	public Fork getLeft() {
@@ -72,16 +72,13 @@ public class Seat {
 	}
 
 	/**
-	 * Gibt den Client zurück.
+	 * Gibt den Client zurueck.
 	 * @return
 	 */
 	public ClientI getClient() {
 		return client;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -91,9 +88,6 @@ public class Seat {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

@@ -5,6 +5,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class BackUpStorage extends UnicastRemoteObject implements BackUpI{
 
+
+	private static final long serialVersionUID = 1L;
 	private final ClientI client;
 	private int[] philIds;
 	private int[] eatCnts;
@@ -46,6 +48,10 @@ public class BackUpStorage extends UnicastRemoteObject implements BackUpI{
 
 	public void setSeatCnt(int seatCnt) {
 		this.seatCnt = seatCnt;
+	}
+
+	public ClientI getClient() {
+		return client;
 	}
 
 	

@@ -15,14 +15,14 @@ public interface ClientI extends Remote{
 	public void createSeats(final int anz)throws RemoteException;
 
 	/**
-	 * Gibt die Id des Clients zurï¿½ck
+	 * Gibt die Id des Clients zurueck
 	 * @return ID
 	 * @throws RemoteException
 	 */
 	public int getId() throws RemoteException;
 	
 	/**
-	 * Gibt die Liste von Sitzen zurï¿½ck.
+	 * Gibt die Liste von Sitzen zurueck.
 	 * @return
 	 * @throws RemoteException
 	 */
@@ -36,7 +36,7 @@ public interface ClientI extends Remote{
 	public void createPhilosophs(final int philosophs) throws RemoteException;
 	
 	/**
-	 * Lï¿½scht einen bestimmten Philosoph vom Client. Wartet jedoch bis dieser
+	 * Loescht einen bestimmten Philosoph vom Client. Wartet jedoch bis dieser
 	 * sein Essvorgang beendet hat.
 	 * @param id
 	 * @return
@@ -52,28 +52,28 @@ public interface ClientI extends Remote{
 	public boolean occupyForkForNeighbour() throws RemoteException; //Funktion um die benÃ¶tigte gabel vom Nachbarclient zu holen
 
 	/**
-	 * Gibt den Namen des Clients zurï¿½ck.
+	 * Gibt den Namen des Clients zurueck.
 	 * @return Name
 	 * @throws RemoteException
 	 */
 	public String getClientName() throws RemoteException;
 	
 	/**
-	 * Gibt die Gabel vom Nachbarclient zurï¿½ck.
+	 * Gibt die Gabel vom Nachbarclient zurueck.
 	 * @return true - wenn erfolgreich
 	 * @throws RemoteException
 	 */
 	public boolean releaseForkByNeighbor() throws RemoteException;
 
 	/**
-	 * Fï¿½gt einen einzeln Philosoph hinzu nach der Initialisierungsphase 
+	 * Fuegt einen einzeln Philosoph hinzu nach der Initialisierungsphase 
 	 * @param id - id Philosoph
 	 * @throws RemoteException
 	 */
 	void addPhilosoph(final int id, final int eatCnt) throws RemoteException;
 	
 	/**
-	 * Fï¿½gt einen einzelnen neuen Philosophen hinzu nach Absturz eines Clients oder während Betrieb.
+	 * Fuegt einen einzelnen neuen Philosophen hinzu nach Absturz eines Clients oder waehrend Betrieb.
 	 * @param id
 	 * @param eatCnt
 	 * @param isHungry
@@ -83,7 +83,7 @@ public interface ClientI extends Remote{
 	
 	
 	/**
-	 * Fï¿½gt ein Seat zur Laufzeit ein mit ï¿½bergebener ID.
+	 * Fuegt ein Seat zur Laufzeit ein mit uebergebener ID.
 	 * @return true wenn es funktioniert hat
 	 * @throws RemoteException
 	 */
@@ -91,7 +91,7 @@ public interface ClientI extends Remote{
 	
 	
 	/**
-	 * Lï¿½scht einen Sitz vom Tisch 
+	 * Loescht einen Sitz vom Tisch 
 	 * @return true wenn es funktioniert hat.
 	 * @throws RemoteException
 	 */
@@ -100,13 +100,13 @@ public interface ClientI extends Remote{
 	public ArrayList<Philosoph> getPhilosophsList() throws RemoteException;
 	
 	/**
-	 * Pausiert alle Philosophen um später einen Sitz während des Betriebs einzufügen 
+	 * Pausiert alle Philosophen um spaeter einen Sitz waehrend des Betriebs einzufuegen 
 	 * @throws RemoteException
 	 */
 	public void pauseEating() throws RemoteException;
 	
 	/**
-	 * Hebt die Pause für alle Philosophen wieder auf.
+	 * Hebt die Pause fuer alle Philosophen wieder auf.
 	 * @throws RemoteException
 	 */
 	public void reactivateEating() throws RemoteException;
@@ -115,7 +115,7 @@ public interface ClientI extends Remote{
 	public void reinitializeSeats(int anz) throws RemoteException;
 	
 	/**
-	 * Gibt zurück ob noch ein Client verfügbar ist.
+	 * Gibt zurueck ob noch ein Client verfuegbar ist.
 	 * @throws RemoteException
 	 */
 	public boolean hasNeighborClient() throws RemoteException;
