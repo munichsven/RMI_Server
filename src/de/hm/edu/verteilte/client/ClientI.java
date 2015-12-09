@@ -73,7 +73,7 @@ public interface ClientI extends Remote{
 	void addPhilosoph(final int id, final int eatCnt) throws RemoteException;
 	
 	/**
-	 * Fï¿½gt einen einzelnen neuen Philosophen hinzu nach Absturz eines Clients.
+	 * Fï¿½gt einen einzelnen neuen Philosophen hinzu nach Absturz eines Clients oder während Betrieb.
 	 * @param id
 	 * @param eatCnt
 	 * @param isHungry
@@ -99,17 +99,33 @@ public interface ClientI extends Remote{
 	
 	public ArrayList<Philosoph> getPhilosophsList() throws RemoteException;
 	
+	/**
+	 * Pausiert alle Philosophen um später einen Sitz während des Betriebs einzufügen 
+	 * @throws RemoteException
+	 */
 	public void pauseEating() throws RemoteException;
 	
+	/**
+	 * Hebt die Pause für alle Philosophen wieder auf.
+	 * @throws RemoteException
+	 */
 	public void reactivateEating() throws RemoteException;
+	
 	
 	public void reinitializeSeats(int anz) throws RemoteException;
 	
+	/**
+	 * Gibt zurück ob noch ein Client verfügbar ist.
+	 * @throws RemoteException
+	 */
 	public boolean hasNeighborClient() throws RemoteException;
 	
+	/**
+	 * Setzt auf false wenn eine Exception geworfen wird.
+	 * @throws RemoteException
+	 */
 	public void setHasNeighborClient(boolean hasNeighborClient) throws RemoteException;
 	
-//	public TableMaster getTableMaster() throws RemoteException;
 	
 	public int[] getSeatIds() throws RemoteException;
 }

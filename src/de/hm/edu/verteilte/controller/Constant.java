@@ -47,20 +47,24 @@ public class Constant {
 	private static int NEWID_FORK = SEATS - 1;
 
 	/**
-	 * Berechnet die jeweiligen id des Philosophen
-	 * 
-	 * @return
+	 * Berechnet die jeweilige id des Philosophen
 	 */
 	public static int createId() {
 		Constant.NEWID++;
 		return NEWID;
 	}
-	
+
+	/**
+	 * Berechnet die jeweilige id des Sitzes
+	 */
 	public static int createSeatId() {
 		Constant.NEWID_SEAT++;
 		return NEWID_SEAT;
 	}
 	
+	/**
+	 * Berechnet die jeweilige id der GabelS
+	 */
 	public static int createForkId() {
 		Constant.NEWID_FORK++;
 		return NEWID_FORK;

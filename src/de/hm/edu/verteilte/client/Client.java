@@ -31,9 +31,13 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	}
 
 	private ServerI server;
+	//Die Registry des Servers
 	private Registry registry;
+	//akutelle Sitzliste
 	private LinkedList<Seat> seatList;
+	//akutelle Gabelliste
 	private LinkedList<Fork> forkList;
+	//aktuelle Philosophenliste
 	private ArrayList<Philosoph> philosophList;
 	private int clientId = 0;
 	private Random random;
@@ -41,7 +45,9 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	private String clientName;
 	private String neighborName;
 
+	//Für spätere Client ausfälle ob es noch einen CLient gibt.
 	private boolean hasNeighborClient;
+	//Table Master der überprüft ob die Eatcounter gleichverteilt sind.
 	private Thread master;
 	private BackUpStorage backUpStorage;
 
@@ -61,6 +67,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public void addPhilosoph(final int id, final int eatCnt) throws RemoteException {
+		//Erstellt Philosoph und startet ihn.
 		Philosoph phil = new Philosoph(this, id, randomHungry(), seatList, eatCnt);
 		philosophList.add(phil);
 		phil.start();
@@ -128,9 +135,11 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		this.pauseEating();
 		seatList.add(1, new Seat((ClientI) this, id));
 		forkList.add(1, new Fork(id));
+		//Setzt die Nachbargabeln 
 		this.seatList.get(0).setRight(forkList.get(1));
 		this.seatList.get(1).setLeft(forkList.get(1));
 		this.seatList.get(1).setRight(forkList.get(2));
+		//Informiert die Philosophen über die neuen Sitze
 		for (Philosoph philosoph : philosophList) {
 			philosoph.setSeatList(seatList);
 		}
@@ -147,6 +156,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 			forkList.remove(1);
 			seatList.get(0).setRight(forkList.get(1));
 			deleted = true;
+			//Informiert die Philosophen über die neuen Sitze
 			for(Philosoph philosoph : philosophList){
 				philosoph.setSeatList(seatList);
 			}
@@ -178,6 +188,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	@Override
 	public boolean occupyForkForNeighbour() throws RemoteException {
 		Fork sharedFork = forkList.getFirst();
+		//Holt sich die Nachbargabel vom anderen Client.
 		boolean successful = false;
 		try {
 			successful = sharedFork.getSemaphore().tryAcquire(Constant.TIME_TO_GET_RIGHT_FORK, TimeUnit.MILLISECONDS);
@@ -213,6 +224,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	@Override
 	public boolean releaseForkByNeighbor() throws RemoteException {
+		//Gibt die Nachbargabel vom anderen Client frei.
 		this.forkList.getFirst().getSemaphore().release();
 		System.out.println("Eigene Gabel wurde durch den Nachbarn freigegeben.");
 		return true;
@@ -333,15 +345,10 @@ public class Client extends UnicastRemoteObject implements ClientI {
 		}
 	}
 
+	//Falls eine Exception auftritt.
 	private void handleClientFailure(Exception e) {
 		this.setHasNeighborClient(false);
 		System.out.println("***Client: " + neighborName + " ist ausgefallen!");
-//		e.printStackTrace();
-//		try {
-//			this.pauseEating();
-//		} catch (RemoteException e1) {
-//			System.out.println("Sollte nicht passieren!");
-//		}
 	}
 
 	/**
@@ -407,8 +414,4 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	public void setHasNeighborClient(boolean hasNeighborClient) {
 		this.hasNeighborClient = hasNeighborClient;
 	}
-
-//	public Thread getTableMaster() {
-//		return master;
-//	}
 }

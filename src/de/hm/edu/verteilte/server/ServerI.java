@@ -15,6 +15,10 @@ public interface ServerI extends Remote{
 	 */
 	boolean insertIntoRegistry(String name, ClientI client) throws RemoteException;
 	
+	/**
+	 * Schreibt den Backupclient in die Registry
+	 * @throws RemoteException
+	 */
 	boolean insertIntoRegistry(String name, BackUpI master) throws RemoteException;
 
 	/**
