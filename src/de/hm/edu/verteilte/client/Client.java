@@ -53,7 +53,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 
 	protected Client() throws RemoteException {
 		super();
-		getRegistryAndregisterToServer();
+		getRegistry();
 		seatList = new LinkedList<Seat>();
 		forkList = new LinkedList<Fork>();
 		philosophList = new ArrayList<Philosoph>();
@@ -324,7 +324,7 @@ public class Client extends UnicastRemoteObject implements ClientI {
 	/**
 	 * Registiert sich am Server bzw. in der Registry des Servers
 	 */
-	private void getRegistryAndregisterToServer() {
+	private void getRegistry() {
 		try {
 
 			try {
